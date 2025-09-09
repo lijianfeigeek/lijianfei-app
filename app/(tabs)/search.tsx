@@ -13,17 +13,19 @@ import {
   Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Ionicons as SearchIcon, Ionicons as XIcon, Ionicons as FilterIcon } from '@expo/vector-icons';
+import { Ionicons as SearchIcon, Ionicons as XIcon, Ionicons as FilterIcon, Ionicons as ChevronIcon } from '@expo/vector-icons';
 import { generateMockCases, getCategories, getAllTags } from '../../data/mockData';
 import { Case } from '../../types';
+import { useRouter } from 'expo-router';
 
 /**
  * 搜索页面
  * 提供案例搜索和筛选功能
  */
 export default function SearchScreen() {
-  // 获取设备安全区域信息
+  // 获取设备安全区域信息和路由器
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   
   // 状态管理 - 教学重点：复杂状态管理
   const [searchQuery, setSearchQuery] = useState('');
@@ -132,6 +134,16 @@ export default function SearchScreen() {
     setSelectedCategory('');
     setSelectedTags([]);
   }, []);
+
+  /**
+   * 处理搜索结果点击事件
+   * 导航到案例详情页面
+   */
+  const handleResultPress = useCallback((caseItem: Case) => {
+    // 使用Expo Router导航到详情页面
+    console.log('搜索结果点击，导航到详情页，案例ID:', caseItem.id);
+    router.push(`/case/${caseItem.id}`);
+  }, [router]);
 
   /**
    * 组件挂载时加载数据
@@ -297,14 +309,22 @@ export default function SearchScreen() {
         data={filteredCases}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.resultItem}>
-            <Text style={styles.resultTitle}>{item.title}</Text>
-            <Text style={styles.resultDescription} numberOfLines={2}>
-              {item.description}
-            </Text>
-            <View style={styles.resultMeta}>
-              <Text style={styles.resultAuthor}>{item.author}</Text>
-              <Text style={styles.resultCategory}>{item.category}</Text>
+          <TouchableOpacity 
+            style={styles.resultItem}
+            onPress={() => handleResultPress(item)}
+          >
+            <View style={styles.resultContent}>
+              <View style={styles.resultText}>
+                <Text style={styles.resultTitle}>{item.title}</Text>
+                <Text style={styles.resultDescription} numberOfLines={2}>
+                  {item.description}
+                </Text>
+                <View style={styles.resultMeta}>
+                  <Text style={styles.resultAuthor}>{item.author}</Text>
+                  <Text style={styles.resultCategory}>{item.category}</Text>
+                </View>
+              </View>
+              <ChevronIcon name="chevron-forward" size={20} color="#999" style={styles.chevronIcon} />
             </View>
           </TouchableOpacity>
         )}
@@ -508,6 +528,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
+    borderLeftWidth: 4,
+    borderLeftColor: '#007AFF',
   },
   
   resultTitle: {
@@ -539,6 +561,22 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#007AFF',
     fontWeight: '500',
+  },
+  
+  // 搜索结果内容布局
+  resultContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  
+  resultText: {
+    flex: 1,
+    marginRight: 12,
+  },
+  
+  chevronIcon: {
+    marginLeft: 8,
   },
   
   // 空状态
