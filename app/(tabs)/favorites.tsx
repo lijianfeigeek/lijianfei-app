@@ -261,7 +261,7 @@ export default function FavoritesScreen() {
       {
         // 适配安全区域
         // paddingTop: insets.top,
-        paddingBottom: insets.bottom,
+        // paddingBottom: insets.bottom,
       }
     ]}>
       <FlatList

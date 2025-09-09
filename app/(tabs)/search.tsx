@@ -280,7 +280,7 @@ export default function SearchScreen() {
       {
         // 适配安全区域
         // paddingTop: insets.top,
-        paddingBottom: insets.bottom,
+        // paddingBottom: insets.bottom,
       }
     ]}>
       {/* 搜索栏 */}
