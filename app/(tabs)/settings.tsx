@@ -18,8 +18,6 @@ import { useColorScheme, Appearance } from 'react-native';
 import { 
   Ionicons as MoonIcon, 
   Ionicons as SunIcon, 
-  Ionicons as BellIcon, 
-  Ionicons as DatabaseIcon,
   Ionicons as InfoIcon,
   Ionicons as MailIcon,
   Ionicons as GithubIcon,
@@ -39,10 +37,6 @@ export default function SettingsScreen() {
   
   // 状态管理 - 教学重点：设置项的状态管理
   const [darkMode, setDarkMode] = useState(colorScheme === 'dark');
-  const [notifications, setNotifications] = useState(true);
-  const [autoSave, setAutoSave] = useState(true);
-  const [highQualityImages, setHighQualityImages] = useState(false);
-  const [cacheSize, setCacheSize] = useState('45.2 MB');
 
   // 监听系统主题变化
   useEffect(() => {
@@ -70,54 +64,9 @@ export default function SettingsScreen() {
     );
   };
 
-  /**
-   * 切换通知设置
-   */
-  const toggleNotifications = (value: boolean) => {
-    setNotifications(value);
-    // TODO: 实现通知权限管理
-    console.log('推送通知:', value ? '开启' : '关闭');
-  };
 
-  /**
-   * 切换自动保存
-   */
-  const toggleAutoSave = (value: boolean) => {
-    setAutoSave(value);
-    // TODO: 实现自动保存逻辑
-    console.log('自动保存:', value ? '开启' : '关闭');
-  };
 
-  /**
-   * 切换高质量图片
-   */
-  const toggleHighQualityImages = (value: boolean) => {
-    setHighQualityImages(value);
-    // TODO: 实现图片质量控制
-    console.log('高质量图片:', value ? '开启' : '关闭');
-  };
 
-  /**
-   * 清除缓存
-   */
-  const clearCache = () => {
-    Alert.alert(
-      '清除缓存',
-      '确定要清除应用缓存吗？这可能会使应用加载变慢。',
-      [
-        { text: '取消', style: 'cancel' },
-        { 
-          text: '确定', 
-          style: 'destructive',
-          onPress: () => {
-            // 模拟清除缓存
-            setCacheSize('0 MB');
-            Alert.alert('成功', '缓存已清除');
-          }
-        }
-      ]
-    );
-  };
 
   /**
    * 分享应用
@@ -237,74 +186,7 @@ export default function SettingsScreen() {
         ),
       })}
 
-      {/* 功能设置 */}
-      {renderSettingGroup({
-        title: '功能',
-        children: (
-          <>
-            {renderSettingItem({
-              icon: <BellIcon name="notifications" size={20} color={colors.primary} />,
-              title: '推送通知',
-              subtitle: '接收新案例和功能更新通知',
-              children: (
-                <Switch
-                  value={notifications}
-                  onValueChange={toggleNotifications}
-                  trackColor={{ false: '#e9ecef', true: '#007AFF' }}
-                  thumbColor={notifications ? '#ffffff' : '#ffffff'}
-                />
-              ),
-            })}
 
-            {renderSettingItem({
-              icon: <DatabaseIcon name="folder" size={20} color={colors.primary} />,
-              title: '自动保存',
-              subtitle: '自动保存收藏到本地',
-              children: (
-                <Switch
-                  value={autoSave}
-                  onValueChange={toggleAutoSave}
-                  trackColor={{ false: '#e9ecef', true: '#007AFF' }}
-                  thumbColor={autoSave ? '#ffffff' : '#ffffff'}
-                />
-              ),
-            })}
-
-            {renderSettingItem({
-              icon: <DatabaseIcon name="folder" size={20} color={colors.primary} />,
-              title: '高质量图片',
-              subtitle: '加载高质量图片（消耗更多流量）',
-              children: (
-                <Switch
-                  value={highQualityImages}
-                  onValueChange={toggleHighQualityImages}
-                  trackColor={{ false: '#e9ecef', true: '#007AFF' }}
-                  thumbColor={highQualityImages ? '#ffffff' : '#ffffff'}
-                />
-              ),
-            })}
-          </>
-        ),
-      })}
-
-      {/* 存储设置 */}
-      {renderSettingGroup({
-        title: '存储',
-        children: (
-          <>
-            {renderSettingItem({
-              icon: <DatabaseIcon name="folder" size={20} color={colors.primary} />,
-              title: '清除缓存',
-              subtitle: `当前缓存大小: ${cacheSize}`,
-              children: (
-                <TouchableOpacity style={[styles.actionButton, { backgroundColor: colors.primary + '20' }]} onPress={clearCache}>
-                  <Text style={[styles.actionButtonText, { color: colors.primary }]}>清除</Text>
-                </TouchableOpacity>
-              ),
-            })}
-          </>
-        ),
-      })}
 
       {/* 其他设置 */}
       {renderSettingGroup({
