@@ -2,7 +2,7 @@
 // 教学要点：Expo Router文件路由，Tab导航，页面布局
 
 import { Tabs } from 'expo-router';
-import { View, Text, StyleSheet, Platform } from 'react-native';
+import { View, Text, StyleSheet, Platform, useColorScheme } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { 
   Ionicons as HomeIcon, 
@@ -10,6 +10,7 @@ import {
   Ionicons as SearchIcon, 
   Ionicons as SettingsIcon 
 } from '@expo/vector-icons';
+import { Colors } from '@/constants/Colors';
 
 /**
  * 案例页面的Tab布局
@@ -18,6 +19,8 @@ import {
 export default function CasesLayout() {
   // 获取设备安全区域信息
   const insets = useSafeAreaInsets();
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
   
   return (
     <Tabs
@@ -29,23 +32,24 @@ export default function CasesLayout() {
             // 为iPhone适配安全区域
             paddingBottom: insets.bottom > 0 ? insets.bottom + 4 : 4,
             height: insets.bottom > 0 ? 60 + insets.bottom : 60,
+            backgroundColor: colors.card,
+            borderTopColor: colors.border,
           }
         ],
-        tabBarActiveTintColor: '#007AFF',
-        tabBarInactiveTintColor: '#999',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.tabIconDefault,
         tabBarLabelStyle: styles.tabBarLabel,
         headerStyle: [
-
-
-          
           styles.header,
           {
             // 为iPhone适配顶部安全区域
             paddingTop: insets.top,
             height: Platform.OS === 'ios' ? 44 + insets.top : 56,
+            backgroundColor: colors.card,
+            borderBottomColor: colors.border,
           }
         ],
-        headerTitleStyle: styles.headerTitle,
+        headerTitleStyle: [styles.headerTitle, { color: colors.text }],
         headerShadowVisible: false,
       }}
     >
@@ -100,9 +104,7 @@ export default function CasesLayout() {
 const styles = StyleSheet.create({
   // 底部Tab栏样式
   tabBar: {
-    backgroundColor: '#ffffff',
     borderTopWidth: 1,
-    borderTopColor: '#e9ecef',
     paddingTop: 4,
     elevation: 8, // Android阴影
     shadowColor: '#000',
@@ -120,15 +122,12 @@ const styles = StyleSheet.create({
 
   // 页面头部样式
   header: {
-    backgroundColor: '#ffffff',
     borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
   },
 
   // 页面标题样式
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#1a1a1a',
   },
 });

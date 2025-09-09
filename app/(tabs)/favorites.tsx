@@ -13,9 +13,11 @@ import {
   Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useColorScheme } from 'react-native';
 import { Ionicons as HeartIcon, Ionicons as TrashIcon, Ionicons as ShareIcon } from '@expo/vector-icons';
 import { useFavorites } from '../../hooks/useFavorites';
 import { Case } from '../../types';
+import { Colors } from '../../constants/Colors';
 
 /**
  * 收藏页面
@@ -24,6 +26,9 @@ import { Case } from '../../types';
 export default function FavoritesScreen() {
   // 获取设备安全区域信息和收藏状态
   const insets = useSafeAreaInsets();
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
+  
   const { 
     favoriteCases, 
     isLoading, 
@@ -77,22 +82,22 @@ export default function FavoritesScreen() {
 
   // 渲染收藏案例项
   const renderFavoriteItem = ({ item }: { item: Case }) => (
-    <TouchableOpacity style={styles.favoriteItem}>
+    <TouchableOpacity style={[styles.favoriteItem, { backgroundColor: colors.card }]}>
       {/* 案例信息 */}
       <View style={styles.favoriteContent}>
-        <Text style={styles.favoriteTitle} numberOfLines={2}>
+        <Text style={[styles.favoriteTitle, { color: colors.text }]} numberOfLines={2}>
           {item.title}
         </Text>
-        <Text style={styles.favoriteDescription} numberOfLines={3}>
+        <Text style={[styles.favoriteDescription, { color: colors.tabIconDefault }]} numberOfLines={3}>
           {item.description}
         </Text>
         <View style={styles.favoriteMeta}>
-          <Text style={styles.favoriteAuthor}>👤 {item.author}</Text>
-          <Text style={styles.favoriteCategory}>📁 {item.category}</Text>
+          <Text style={[styles.favoriteAuthor, { color: colors.tabIconDefault, backgroundColor: colors.border + '20' }]}>👤 {item.author}</Text>
+          <Text style={[styles.favoriteCategory, { color: colors.primary, backgroundColor: colors.primary + '20' }]}>📁 {item.category}</Text>
         </View>
         <View style={styles.favoriteTags}>
           {item.tags.slice(0, 3).map((tag, index) => (
-            <Text key={index} style={styles.favoriteTag}>#{tag}</Text>
+            <Text key={index} style={[styles.favoriteTag, { color: colors.tabIconDefault, backgroundColor: colors.border + '20' }]}>#{tag}</Text>
           ))}
         </View>
       </View>
@@ -119,8 +124,8 @@ export default function FavoritesScreen() {
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
       <Text style={styles.emptyIcon}>🤍</Text>
-      <Text style={styles.emptyTitle}>暂无收藏</Text>
-      <Text style={styles.emptyDescription}>
+      <Text style={[styles.emptyTitle, { color: colors.text }]}>暂无收藏</Text>
+      <Text style={[styles.emptyDescription, { color: colors.tabIconDefault }]}>
         快去浏览案例，点击爱心图标收藏你喜欢的作品吧！
       </Text>
     </View>
@@ -128,18 +133,18 @@ export default function FavoritesScreen() {
 
   // 渲染头部
   const renderHeader = () => (
-    <View style={styles.header}>
-      <Text style={styles.headerTitle}>我的收藏</Text>
-      <Text style={styles.headerSubtitle}>
+    <View style={[styles.header, { backgroundColor: colors.card }]}>
+      <Text style={[styles.headerTitle, { color: colors.text }]}>我的收藏</Text>
+      <Text style={[styles.headerSubtitle, { color: colors.tabIconDefault }]}>
         共 {favoriteCases.length} 个收藏案例
       </Text>
       {favoriteCases.length > 0 && (
         <TouchableOpacity 
-          style={styles.clearButton}
+          style={[styles.clearButton, { backgroundColor: colors.border + '20' }]}
           onPress={handleClearAllFavorites}
         >
           <TrashIcon name="trash" size={16} color="#f44336" />
-          <Text style={styles.clearButtonText}>清除所有</Text>
+          <Text style={[styles.clearButtonText, { color: '#f44336' }]}>清除所有</Text>
         </TouchableOpacity>
       )}
     </View>
@@ -147,9 +152,9 @@ export default function FavoritesScreen() {
 
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={styles.loadingText}>加载收藏中...</Text>
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
+        <Text style={[styles.loadingText, { color: colors.text }]}>加载收藏中...</Text>
       </View>
     );
   }
@@ -161,6 +166,7 @@ export default function FavoritesScreen() {
         // 适配安全区域
         // paddingTop: insets.top,
         // paddingBottom: insets.bottom,
+        backgroundColor: colors.background,
       }
     ]}>
       <FlatList
@@ -185,7 +191,7 @@ export default function FavoritesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    // backgroundColor: '#f8f9fa', // 动态设置
   },
   
   listContainer: {
@@ -194,7 +200,7 @@ const styles = StyleSheet.create({
   
   // 头部样式
   header: {
-    backgroundColor: '#ffffff',
+    // backgroundColor: '#ffffff', // 动态设置
     borderRadius: 16,
     padding: 20,
     marginBottom: 16,
@@ -208,20 +214,20 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#1a1a1a',
+    // color: '#1a1a1a', // 动态设置
     marginBottom: 4,
   },
   
   headerSubtitle: {
     fontSize: 14,
-    color: '#666',
+    // color: '#666', // 动态设置
     marginBottom: 12,
   },
   
   clearButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ffebee',
+    // backgroundColor: '#ffebee', // 动态设置
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,
@@ -231,13 +237,13 @@ const styles = StyleSheet.create({
   
   clearButtonText: {
     fontSize: 12,
-    color: '#f44336',
+    // color: '#f44336', // 动态设置
     fontWeight: '600',
   },
   
   // 收藏项样式
   favoriteItem: {
-    backgroundColor: '#ffffff',
+    // backgroundColor: '#ffffff', // 动态设置
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
@@ -257,14 +263,14 @@ const styles = StyleSheet.create({
   favoriteTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    // color: '#333', // 动态设置
     marginBottom: 8,
     lineHeight: 22,
   },
   
   favoriteDescription: {
     fontSize: 14,
-    color: '#666',
+    // color: '#666', // 动态设置
     marginBottom: 12,
     lineHeight: 20,
   },
@@ -278,8 +284,8 @@ const styles = StyleSheet.create({
   
   favoriteAuthor: {
     fontSize: 12,
-    color: '#888',
-    backgroundColor: '#f0f0f0',
+    // color: '#888', // 动态设置
+    // backgroundColor: '#f0f0f0', // 动态设置
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 8,
@@ -287,8 +293,8 @@ const styles = StyleSheet.create({
   
   favoriteCategory: {
     fontSize: 12,
-    color: '#007AFF',
-    backgroundColor: '#e3f2fd',
+    // color: '#007AFF', // 动态设置
+    // backgroundColor: '#e3f2fd', // 动态设置
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 8,
@@ -302,8 +308,8 @@ const styles = StyleSheet.create({
   
   favoriteTag: {
     fontSize: 11,
-    color: '#666',
-    backgroundColor: '#f8f9fa',
+    // color: '#666', // 动态设置
+    // backgroundColor: '#f8f9fa', // 动态设置
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 8,
@@ -352,13 +358,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#333',
+    // color: '#333', // 动态设置
     marginBottom: 8,
   },
   
   emptyDescription: {
     fontSize: 14,
-    color: '#666',
+    // color: '#666', // 动态设置
     textAlign: 'center',
     lineHeight: 20,
     paddingHorizontal: 40,
@@ -373,7 +379,7 @@ const styles = StyleSheet.create({
   
   loadingText: {
     fontSize: 16,
-    color: '#666',
+    // color: '#666', // 动态设置
     marginTop: 12,
   },
 });

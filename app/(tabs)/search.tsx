@@ -11,21 +11,25 @@ import {
   StyleSheet,
   ActivityIndicator,
   Platform,
+  useColorScheme,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons as SearchIcon, Ionicons as XIcon, Ionicons as FilterIcon, Ionicons as ChevronIcon } from '@expo/vector-icons';
 import { generateMockCases, getCategories, getAllTags } from '../../data/mockData';
 import { Case } from '../../types';
 import { useRouter } from 'expo-router';
+import { Colors } from '../../constants/Colors';
 
 /**
  * 搜索页面
  * 提供案例搜索和筛选功能
  */
 export default function SearchScreen() {
-  // 获取设备安全区域信息和路由器
+  // 获取设备安全区域信息、路由器和颜色方案
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
   
   // 状态管理 - 教学重点：复杂状态管理
   const [searchQuery, setSearchQuery] = useState('');
@@ -167,15 +171,26 @@ export default function SearchScreen() {
 
   // 渲染搜索输入框
   const renderSearchBar = () => (
-    <View style={styles.searchContainer}>
-      <View style={styles.searchInputContainer}>
-        <SearchIcon name="search" size={20} color="#666" style={styles.searchIcon} />
+    <View style={[
+      styles.searchContainer,
+      {
+        backgroundColor: colors.card,
+        borderBottomColor: colors.border,
+      }
+    ]}>
+      <View style={[
+        styles.searchInputContainer,
+        {
+          backgroundColor: colors.border + '20',
+        }
+      ]}>
+        <SearchIcon name="search" size={20} color={colors.tabIconDefault} style={styles.searchIcon} />
         <TextInput
-          style={styles.searchInput}
+          style={[styles.searchInput, { color: colors.text }]}
           placeholder="搜索案例、作者或标签..."
           value={searchQuery}
           onChangeText={handleSearchChange}
-          placeholderTextColor="#999"
+          placeholderTextColor={colors.tabIconDefault}
           returnKeyType="search"
           autoCapitalize="none"
           autoCorrect={false}
@@ -185,17 +200,22 @@ export default function SearchScreen() {
             onPress={() => setSearchQuery('')}
             style={styles.clearButton}
           >
-            <XIcon name="close" size={16} color="#666" />
+            <XIcon name="close" size={16} color={colors.tabIconDefault} />
           </TouchableOpacity>
         )}
       </View>
       
       <TouchableOpacity 
-        style={styles.filterButton}
+        style={[
+          styles.filterButton,
+          {
+            backgroundColor: colors.primary + '20',
+          }
+        ]}
         onPress={() => setShowFilters(!showFilters)}
       >
-        <FilterIcon name="filter" size={20} color="#007AFF" />
-        <Text style={styles.filterButtonText}>筛选</Text>
+        <FilterIcon name="filter" size={20} color={colors.primary} />
+        <Text style={[styles.filterButtonText, { color: colors.primary }]}>筛选</Text>
       </TouchableOpacity>
     </View>
   );
@@ -205,23 +225,36 @@ export default function SearchScreen() {
     if (!showFilters) return null;
 
     return (
-      <View style={styles.filtersContainer}>
+      <View style={[
+        styles.filtersContainer,
+        {
+          backgroundColor: colors.card,
+          borderBottomColor: colors.border,
+        }
+      ]}>
         {/* 分类筛选 */}
         <View style={styles.filterSection}>
-          <Text style={styles.filterTitle}>分类</Text>
+          <Text style={[styles.filterTitle, { color: colors.text }]}>分类</Text>
           <View style={styles.categoriesContainer}>
             {categories.map(category => (
               <TouchableOpacity
                 key={category}
                 style={[
                   styles.categoryChip,
-                  selectedCategory === category && styles.categoryChipSelected
+                  selectedCategory === category && styles.categoryChipSelected,
+                  {
+                    backgroundColor: selectedCategory === category ? colors.primary : colors.border + '20',
+                    borderColor: colors.border,
+                  }
                 ]}
                 onPress={() => handleCategorySelect(category)}
               >
                 <Text style={[
                   styles.categoryChipText,
-                  selectedCategory === category && styles.categoryChipTextSelected
+                  selectedCategory === category && styles.categoryChipTextSelected,
+                  {
+                    color: selectedCategory === category ? '#ffffff' : colors.text,
+                  }
                 ]}>
                   {category}
                 </Text>
@@ -232,20 +265,27 @@ export default function SearchScreen() {
 
         {/* 标签筛选 */}
         <View style={styles.filterSection}>
-          <Text style={styles.filterTitle}>标签</Text>
+          <Text style={[styles.filterTitle, { color: colors.text }]}>标签</Text>
           <View style={styles.tagsContainer}>
             {allTags.slice(0, 12).map(tag => (
               <TouchableOpacity
                 key={tag}
                 style={[
                   styles.tagChip,
-                  selectedTags.includes(tag) && styles.tagChipSelected
+                  selectedTags.includes(tag) && styles.tagChipSelected,
+                  {
+                    backgroundColor: selectedTags.includes(tag) ? colors.primary : colors.border + '20',
+                    borderColor: colors.border,
+                  }
                 ]}
                 onPress={() => handleTagToggle(tag)}
               >
                 <Text style={[
                   styles.tagChipText,
-                  selectedTags.includes(tag) && styles.tagChipTextSelected
+                  selectedTags.includes(tag) && styles.tagChipTextSelected,
+                  {
+                    color: selectedTags.includes(tag) ? '#ffffff' : colors.text,
+                  }
                 ]}>
                   #{tag}
                 </Text>
@@ -275,11 +315,17 @@ export default function SearchScreen() {
     }
 
     return (
-      <View style={styles.searchStats}>
-        <Text style={styles.searchStatsText}>
+      <View style={[
+        styles.searchStats,
+        {
+          backgroundColor: colors.card,
+          borderBottomColor: colors.border,
+        }
+      ]}>
+        <Text style={[styles.searchStatsText, { color: colors.tabIconDefault }]}>
           找到 {filteredCases.length} 个相关案例
           {(searchQuery || selectedCategory || selectedTags.length > 0) && (
-            <Text style={styles.searchStatsQuery}>
+            <Text style={[styles.searchStatsQuery, { color: colors.primary }]}>
               {searchQuery && ` "${searchQuery}"`}
               {selectedCategory && ` 分类: ${selectedCategory}`}
               {selectedTags.length > 0 && ` 标签: ${selectedTags.join(', ')}`}
@@ -292,9 +338,9 @@ export default function SearchScreen() {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={styles.loadingText}>加载中...</Text>
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
+        <Text style={[styles.loadingText, { color: colors.text }]}>加载中...</Text>
       </View>
     );
   }
@@ -306,6 +352,7 @@ export default function SearchScreen() {
         // 适配安全区域
         // paddingTop: insets.top,
         // paddingBottom: insets.bottom,
+        backgroundColor: colors.background,
       }
     ]}>
       {/* 搜索栏 */}
@@ -323,34 +370,34 @@ export default function SearchScreen() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity 
-            style={styles.resultItem}
+            style={[styles.resultItem, { backgroundColor: colors.card, borderLeftColor: colors.primary }]}
             onPress={() => handleResultPress(item)}
           >
             <View style={styles.resultContent}>
               <View style={styles.resultText}>
-                <Text style={styles.resultTitle}>{item.title}</Text>
-                <Text style={styles.resultDescription} numberOfLines={2}>
+                <Text style={[styles.resultTitle, { color: colors.text }]}>{item.title}</Text>
+                <Text style={[styles.resultDescription, { color: colors.tabIconDefault }]} numberOfLines={2}>
                   {item.description}
                 </Text>
                 <View style={styles.resultMeta}>
-                  <Text style={styles.resultAuthor}>{item.author}</Text>
-                  <Text style={styles.resultCategory}>{item.category}</Text>
+                  <Text style={[styles.resultAuthor, { color: colors.tabIconDefault }]}>{item.author}</Text>
+                  <Text style={[styles.resultCategory, { color: colors.primary }]}>{item.category}</Text>
                 </View>
               </View>
-              <ChevronIcon name="chevron-forward" size={20} color="#999" style={styles.chevronIcon} />
+              <ChevronIcon name="chevron-forward" size={20} color={colors.tabIconDefault} style={styles.chevronIcon} />
             </View>
           </TouchableOpacity>
         )}
         ListEmptyComponent={() => (
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyIcon}>🔍</Text>
-            <Text style={styles.emptyTitle}>
+            <Text style={[styles.emptyTitle, { color: colors.text }]}>
               {!searchQuery.trim() && !selectedCategory && selectedTags.length === 0 
                 ? '输入关键词开始搜索' 
                 : '未找到相关案例'
               }
             </Text>
-            <Text style={styles.emptyDescription}>
+            <Text style={[styles.emptyDescription, { color: colors.tabIconDefault }]}>
               {!searchQuery.trim() && !selectedCategory && selectedTags.length === 0 
                 ? '搜索案例、作者或标签来找到相关内容'
                 : '尝试调整搜索关键词或筛选条件'
@@ -417,17 +464,14 @@ const styles = StyleSheet.create({
   
   filterButtonText: {
     fontSize: 14,
-    color: '#007AFF',
     fontWeight: '600',
   },
   
   // 筛选面板样式
   filtersContainer: {
-    backgroundColor: '#ffffff',
     paddingHorizontal: 16,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
   },
   
   filterSection: {
@@ -437,7 +481,6 @@ const styles = StyleSheet.create({
   filterTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#333',
     marginBottom: 8,
   },
   
@@ -448,12 +491,10 @@ const styles = StyleSheet.create({
   },
   
   categoryChip: {
-    backgroundColor: '#f8f9fa',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#e9ecef',
   },
   
   categoryChipSelected: {
@@ -463,7 +504,6 @@ const styles = StyleSheet.create({
   
   categoryChipText: {
     fontSize: 12,
-    color: '#666',
     fontWeight: '500',
   },
   
@@ -478,12 +518,10 @@ const styles = StyleSheet.create({
   },
   
   tagChip: {
-    backgroundColor: '#f8f9fa',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#e9ecef',
   },
   
   tagChipSelected: {
@@ -493,7 +531,6 @@ const styles = StyleSheet.create({
   
   tagChipText: {
     fontSize: 11,
-    color: '#666',
     fontWeight: '500',
   },
   
@@ -502,7 +539,6 @@ const styles = StyleSheet.create({
   },
   
   clearFiltersButton: {
-    backgroundColor: '#ffebee',
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 12,
@@ -540,7 +576,7 @@ const styles = StyleSheet.create({
   },
   
   resultItem: {
-    backgroundColor: '#ffffff',
+    // backgroundColor: '#ffffff', // 动态设置
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
@@ -550,19 +586,19 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 2,
     borderLeftWidth: 4,
-    borderLeftColor: '#007AFF',
+    // borderLeftColor: '#007AFF', // 动态设置
   },
   
   resultTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    // color: '#333', // 动态设置
     marginBottom: 4,
   },
   
   resultDescription: {
     fontSize: 14,
-    color: '#666',
+    // color: '#666', // 动态设置
     marginBottom: 8,
     lineHeight: 20,
   },
@@ -575,12 +611,12 @@ const styles = StyleSheet.create({
   
   resultAuthor: {
     fontSize: 12,
-    color: '#999',
+    // color: '#999', // 动态设置
   },
   
   resultCategory: {
     fontSize: 12,
-    color: '#007AFF',
+    // color: '#007AFF', // 动态设置
     fontWeight: '500',
   },
   
@@ -616,13 +652,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
+    // color: '#333', // 动态设置
     marginBottom: 8,
   },
   
   emptyDescription: {
     fontSize: 14,
-    color: '#666',
+    // color: '#666', // 动态设置
     textAlign: 'center',
   },
   

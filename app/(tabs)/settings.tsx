@@ -14,6 +14,7 @@ import {
   Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useColorScheme, Appearance } from 'react-native';
 import { 
   Ionicons as MoonIcon, 
   Ionicons as SunIcon, 
@@ -24,28 +25,41 @@ import {
   Ionicons as GithubIcon,
   Ionicons as ShareIcon 
 } from '@expo/vector-icons';
+import { Colors } from '@/constants/Colors';
 
 /**
  * 设置页面
  * 提供应用设置、主题切换、关于信息等功能
  */
 export default function SettingsScreen() {
-  // 获取设备安全区域信息
+  // 获取设备安全区域信息和颜色方案
   const insets = useSafeAreaInsets();
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
   
   // 状态管理 - 教学重点：设置项的状态管理
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(colorScheme === 'dark');
   const [notifications, setNotifications] = useState(true);
   const [autoSave, setAutoSave] = useState(true);
   const [highQualityImages, setHighQualityImages] = useState(false);
   const [cacheSize, setCacheSize] = useState('45.2 MB');
+
+  // 监听系统主题变化
+  useEffect(() => {
+    const listener = Appearance.addChangeListener(({ colorScheme }) => {
+      setDarkMode(colorScheme === 'dark');
+    });
+    
+    return () => listener.remove();
+  }, []);
 
   /**
    * 切换深色模式
    */
   const toggleDarkMode = (value: boolean) => {
     setDarkMode(value);
-    // TODO: 实现深色模式切换逻辑
+    // 实现深色模式切换逻辑 - 使用 Appearance API 来切换系统主题
+    Appearance.setColorScheme(value ? 'dark' : 'light');
     console.log('深色模式:', value ? '开启' : '关闭');
     
     // 显示切换提示
@@ -159,12 +173,18 @@ export default function SettingsScreen() {
     subtitle?: string;
     children: React.ReactNode;
   }) => (
-    <View style={styles.settingItem}>
+    <View style={[
+      styles.settingItem,
+      {
+        backgroundColor: colors.card,
+        borderBottomColor: colors.border,
+      }
+    ]}>
       <View style={styles.settingInfo}>
         {icon}
         <View style={styles.settingText}>
-          <Text style={styles.settingTitle}>{title}</Text>
-          {subtitle && <Text style={styles.settingSubtitle}>{subtitle}</Text>}
+          <Text style={[styles.settingTitle, { color: colors.text }]}>{title}</Text>
+          {subtitle && <Text style={[styles.settingSubtitle, { color: colors.tabIconDefault }]}>{subtitle}</Text>}
         </View>
       </View>
       {children}
@@ -180,7 +200,7 @@ export default function SettingsScreen() {
     children: React.ReactNode;
   }) => (
     <View style={styles.settingGroup}>
-      <Text style={styles.groupTitle}>{title}</Text>
+      <Text style={[styles.groupTitle, { color: colors.tabIconDefault }]}>{title}</Text>
       {children}
     </View>
   );
@@ -192,6 +212,7 @@ export default function SettingsScreen() {
         // 适配安全区域
         // paddingTop: insets.top,
         paddingBottom: insets.bottom,
+        backgroundColor: colors.background,
       }
     ]}>
       {/* 外观设置 */}
@@ -200,7 +221,7 @@ export default function SettingsScreen() {
         children: (
           <>
             {renderSettingItem({
-              icon: darkMode ? <MoonIcon name="moon" size={20} color="#007AFF" /> : <SunIcon name="sunny" size={20} color="#FF9500" />,
+              icon: darkMode ? <MoonIcon name="moon" size={20} color={colors.primary} /> : <SunIcon name="sunny" size={20} color="#FF9500" />,
               title: '深色模式',
               subtitle: darkMode ? '当前使用深色主题' : '当前使用浅色主题',
               children: (
@@ -222,7 +243,7 @@ export default function SettingsScreen() {
         children: (
           <>
             {renderSettingItem({
-              icon: <BellIcon name="notifications" size={20} color="#007AFF" />,
+              icon: <BellIcon name="notifications" size={20} color={colors.primary} />,
               title: '推送通知',
               subtitle: '接收新案例和功能更新通知',
               children: (
@@ -236,7 +257,7 @@ export default function SettingsScreen() {
             })}
 
             {renderSettingItem({
-              icon: <DatabaseIcon name="folder" size={20} color="#007AFF" />,
+              icon: <DatabaseIcon name="folder" size={20} color={colors.primary} />,
               title: '自动保存',
               subtitle: '自动保存收藏到本地',
               children: (
@@ -250,7 +271,7 @@ export default function SettingsScreen() {
             })}
 
             {renderSettingItem({
-              icon: <DatabaseIcon name="folder" size={20} color="#007AFF" />,
+              icon: <DatabaseIcon name="folder" size={20} color={colors.primary} />,
               title: '高质量图片',
               subtitle: '加载高质量图片（消耗更多流量）',
               children: (
@@ -272,12 +293,12 @@ export default function SettingsScreen() {
         children: (
           <>
             {renderSettingItem({
-              icon: <DatabaseIcon name="folder" size={20} color="#007AFF" />,
+              icon: <DatabaseIcon name="folder" size={20} color={colors.primary} />,
               title: '清除缓存',
               subtitle: `当前缓存大小: ${cacheSize}`,
               children: (
-                <TouchableOpacity style={styles.actionButton} onPress={clearCache}>
-                  <Text style={styles.actionButtonText}>清除</Text>
+                <TouchableOpacity style={[styles.actionButton, { backgroundColor: colors.primary + '20' }]} onPress={clearCache}>
+                  <Text style={[styles.actionButtonText, { color: colors.primary }]}>清除</Text>
                 </TouchableOpacity>
               ),
             })}
@@ -291,45 +312,45 @@ export default function SettingsScreen() {
         children: (
           <>
             {renderSettingItem({
-              icon: <ShareIcon name="share" size={20} color="#007AFF" />,
+              icon: <ShareIcon name="share" size={20} color={colors.primary} />,
               title: '分享应用',
               subtitle: '分享给朋友',
               children: (
-                <TouchableOpacity style={styles.actionButton} onPress={shareApp}>
-                  <Text style={styles.actionButtonText}>分享</Text>
+                <TouchableOpacity style={[styles.actionButton, { backgroundColor: colors.primary + '20' }]} onPress={shareApp}>
+                  <Text style={[styles.actionButtonText, { color: colors.primary }]}>分享</Text>
                 </TouchableOpacity>
               ),
             })}
 
             {renderSettingItem({
-              icon: <MailIcon name="mail" size={20} color="#007AFF" />,
+              icon: <MailIcon name="mail" size={20} color={colors.primary} />,
               title: '意见反馈',
               subtitle: '发送邮件给我们',
               children: (
-                <TouchableOpacity style={styles.actionButton} onPress={sendFeedback}>
-                  <Text style={styles.actionButtonText}>反馈</Text>
+                <TouchableOpacity style={[styles.actionButton, { backgroundColor: colors.primary + '20' }]} onPress={sendFeedback}>
+                  <Text style={[styles.actionButtonText, { color: colors.primary }]}>反馈</Text>
                 </TouchableOpacity>
               ),
             })}
 
             {renderSettingItem({
-              icon: <GithubIcon name="logo-github" size={20} color="#007AFF" />,
+              icon: <GithubIcon name="logo-github" size={20} color={colors.primary} />,
               title: '源代码',
               subtitle: '查看 GitHub 项目',
               children: (
-                <TouchableOpacity style={styles.actionButton} onPress={openGithub}>
-                  <Text style={styles.actionButtonText}>查看</Text>
+                <TouchableOpacity style={[styles.actionButton, { backgroundColor: colors.primary + '20' }]} onPress={openGithub}>
+                  <Text style={[styles.actionButtonText, { color: colors.primary }]}>查看</Text>
                 </TouchableOpacity>
               ),
             })}
 
             {renderSettingItem({
-              icon: <InfoIcon name="information-circle" size={20} color="#007AFF" />,
+              icon: <InfoIcon name="information-circle" size={20} color={colors.primary} />,
               title: '关于',
               subtitle: '版本 1.0.0',
               children: (
-                <TouchableOpacity style={styles.actionButton} onPress={showAbout}>
-                  <Text style={styles.actionButtonText}>关于</Text>
+                <TouchableOpacity style={[styles.actionButton, { backgroundColor: colors.primary + '20' }]} onPress={showAbout}>
+                  <Text style={[styles.actionButtonText, { color: colors.primary }]}>关于</Text>
                 </TouchableOpacity>
               ),
             })}
@@ -344,12 +365,10 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
   },
 
   // 设置组样式
   settingGroup: {
-    backgroundColor: '#ffffff',
     marginTop: 16,
     paddingHorizontal: 16,
     paddingVertical: 8,
@@ -358,7 +377,6 @@ const styles = StyleSheet.create({
   groupTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#666',
     marginTop: 16,
     marginBottom: 8,
     paddingHorizontal: 4,
@@ -372,7 +390,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 4,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
   },
 
   settingInfo: {
@@ -389,19 +406,16 @@ const styles = StyleSheet.create({
   settingTitle: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#333',
     marginBottom: 2,
   },
 
   settingSubtitle: {
     fontSize: 13,
-    color: '#666',
     lineHeight: 18,
   },
 
   // 操作按钮样式
   actionButton: {
-    backgroundColor: '#e3f2fd',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 12,
@@ -411,7 +425,6 @@ const styles = StyleSheet.create({
 
   actionButtonText: {
     fontSize: 12,
-    color: '#007AFF',
     fontWeight: '600',
   },
 });

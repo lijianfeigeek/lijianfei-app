@@ -2,22 +2,25 @@
 // 教学要点：页面组件结构，状态管理，数据流，错误处理，导航
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View, useColorScheme } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { CaseList } from '../../components/CaseList';
 import { generateMockCases } from '../../data/mockData';
 import { useFavorites } from '../../hooks/useFavorites';
 import { Case } from '../../types';
+import { Colors } from '../../constants/Colors';
 
 /**
  * 案例列表主页面
  * 展示所有AI生成案例，支持下拉刷新和导航到详情页
  */
 export default function CasesScreen() {
-  // 获取设备安全区域信息和路由器
+  // 获取设备安全区域信息、路由器和颜色方案
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
   
   // 状态管理 - 教学重点：React Hooks使用
   const [cases, setCases] = useState<Case[]>([]);
@@ -106,10 +109,10 @@ export default function CasesScreen() {
   // 错误状态显示
   if (error && cases.length === 0) {
     return (
-      <View style={styles.errorContainer}>
+      <View style={[styles.errorContainer, { backgroundColor: colors.background }]}>
         <Text style={styles.errorIcon}>⚠️</Text>
-        <Text style={styles.errorTitle}>加载失败</Text>
-        <Text style={styles.errorMessage}>{error}</Text>
+        <Text style={[styles.errorTitle, { color: colors.text }]}>加载失败</Text>
+        <Text style={[styles.errorMessage, { color: colors.tabIconDefault }]}>{error}</Text>
       </View>
     );
   }
@@ -121,18 +124,19 @@ export default function CasesScreen() {
         // 适配安全区域
         // paddingTop: insets.top,
         // paddingBottom: insets.bottom,
+        backgroundColor: colors.background,
       }
     ]}>
       {/* 页面标题 */}
       <View style={[
         styles.header,
-        // {
-        //   // 适配顶部安全区域
-        //   paddingTop: Platform.OS === 'ios' ? insets.top + 20 : 20,
-        // }
+        {
+          backgroundColor: colors.card,
+          borderBottomColor: colors.border,
+        }
       ]}>
-        <Text style={styles.title}>🤖 Nano Banana AI</Text>
-        <Text style={styles.subtitle}>探索AI创意生成的无限可能</Text>
+        <Text style={[styles.title, { color: colors.text }]}>🤖 Nano Banana AI</Text>
+        <Text style={[styles.subtitle, { color: colors.tabIconDefault }]}>探索AI创意生成的无限可能</Text>
       </View>
 
       {/* 案例列表组件 */}
@@ -151,16 +155,13 @@ export default function CasesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
   },
   
   // 页面头部样式
   header: {
-    backgroundColor: '#ffffff',
     paddingHorizontal: 16,
     paddingVertical: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -171,13 +172,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '800',
-    color: '#1a1a1a',
     marginBottom: 4,
   },
   
   subtitle: {
     fontSize: 14,
-    color: '#666',
     fontWeight: '500',
   },
 
@@ -186,7 +185,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f8f9fa',
     paddingHorizontal: 20,
   },
   
@@ -198,13 +196,11 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
     marginBottom: 8,
   },
   
   errorMessage: {
     fontSize: 14,
-    color: '#666',
     textAlign: 'center',
     lineHeight: 20,
   },

@@ -4,9 +4,11 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import React, { useCallback } from 'react';
+import { View, useColorScheme as useNativeColorScheme } from 'react-native';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { FavoritesProvider } from '@/hooks/useFavorites';
+import { Colors } from '@/constants/Colors';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -25,10 +27,33 @@ export default function RootLayout() {
     return null;
   }
 
+  const colors = Colors[colorScheme ?? 'light'];
+  
+  // 创建自定义主题，包含背景色
+  const theme = colorScheme === 'dark' ? {
+    ...DarkTheme,
+    colors: {
+      ...DarkTheme.colors,
+      background: colors.background,
+      card: colors.card,
+      text: colors.text,
+      border: colors.border,
+    }
+  } : {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: colors.background,
+      card: colors.card,
+      text: colors.text,
+      border: colors.border,
+    }
+  };
+  
   return (
     <FavoritesProvider onFavoritesChange={handleFavoritesChange}>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <StatusBar style="auto" />
+      <ThemeProvider value={theme}>
+        <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
         <Stack
           screenOptions={{headerShown:false,animation:"slide_from_right"}}
         >

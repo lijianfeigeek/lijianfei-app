@@ -15,11 +15,13 @@ import {
   Dimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useColorScheme } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { generateMockCases } from '../../../data/mockData';
 import { useFavorites } from '../../../hooks/useFavorites';
 import { Case } from '../../../types';
+import { Colors } from '../../../constants/Colors';
 
 /**
  * 案例详情页面
@@ -30,6 +32,8 @@ export default function CaseDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
   
   // 状态管理
   const [caseItem, setCaseItem] = useState<Case | null>(null);
@@ -133,9 +137,9 @@ export default function CaseDetailScreen() {
   // 加载状态
   if (loading) {
     return (
-      <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={[styles.container, { paddingTop: insets.top, backgroundColor: colors.background }]}>
         <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>加载中...</Text>
+          <Text style={[styles.loadingText, { color: colors.text }]}>加载中...</Text>
         </View>
       </View>
     );
@@ -144,9 +148,9 @@ export default function CaseDetailScreen() {
   // 案例不存在
   if (!caseItem) {
     return (
-      <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={[styles.container, { paddingTop: insets.top, backgroundColor: colors.background }]}>
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>案例不存在</Text>
+          <Text style={[styles.errorText, { color: colors.text }]}>案例不存在</Text>
         </View>
       </View>
     );
@@ -156,17 +160,17 @@ export default function CaseDetailScreen() {
   const allImages = [...caseItem.inputImages, ...caseItem.outputImages];
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={[styles.container, { paddingTop: insets.top, backgroundColor: colors.background }]}>
       {/* 顶部导航栏 */}
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
         <TouchableOpacity 
-          style={styles.backButton}
+          style={[styles.backButton, { backgroundColor: colors.border + '20' }]}
           onPress={() => router.back()}
         >
-          <Ionicons name="chevron-back" size={24} color="#333" />
+          <Ionicons name="chevron-back" size={24} color={colors.text} />
         </TouchableOpacity>
         
-        <Text style={styles.headerTitle} numberOfLines={1}>
+        <Text style={[styles.headerTitle, { color: colors.text }]} numberOfLines={1}>
           {caseItem.title}
         </Text>
         
@@ -174,14 +178,15 @@ export default function CaseDetailScreen() {
           <TouchableOpacity 
             style={[
               styles.actionButton,
-              favoriteAnimating && styles.favoriteButtonAnimating
+              favoriteAnimating && styles.favoriteButtonAnimating,
+              { backgroundColor: colors.border + '20' }
             ]}
             onPress={handleToggleFavorite}
           >
             <Ionicons 
               name={isFavorite(caseItem.id) ? "heart" : "heart-outline"} 
               size={22} 
-              color={isFavorite(caseItem.id) ? "#ff3b30" : "#333"} 
+              color={isFavorite(caseItem.id) ? "#ff3b30" : colors.text} 
               style={[
                 favoriteAnimating && styles.favoriteIconAnimating
               ]}
@@ -189,10 +194,10 @@ export default function CaseDetailScreen() {
           </TouchableOpacity>
           
           <TouchableOpacity 
-            style={styles.actionButton}
+            style={[styles.actionButton, { backgroundColor: colors.border + '20' }]}
             onPress={handleShare}
           >
-            <Ionicons name="share-outline" size={22} color="#333" />
+            <Ionicons name="share-outline" size={22} color={colors.text} />
           </TouchableOpacity>
         </View>
       </View>
@@ -235,7 +240,7 @@ export default function CaseDetailScreen() {
                 {/* 图片加载指示器 */}
                 {imageLoading && (
                   <View style={styles.imageLoadingOverlay}>
-                    <Text style={styles.loadingText}>加载中...</Text>
+                    <Text style={[styles.loadingText, { color: colors.text }]}>加载中...</Text>
                   </View>
                 )}
                 
@@ -267,42 +272,42 @@ export default function CaseDetailScreen() {
         <View style={styles.infoSection}>
           {/* 标题和分类 */}
           <View style={styles.titleSection}>
-            <Text style={styles.title}>{caseItem.title}</Text>
+            <Text style={[styles.title, { color: colors.text }]}>{caseItem.title}</Text>
             <View style={styles.metaRow}>
-              <Text style={styles.author}>👤 {caseItem.author}</Text>
-              <Text style={styles.category}>📁 {caseItem.category}</Text>
+              <Text style={[styles.author, { color: colors.tabIconDefault, backgroundColor: colors.border + '20' }]}>👤 {caseItem.author}</Text>
+              <Text style={[styles.category, { color: colors.primary, backgroundColor: colors.primary + '20' }]}>📁 {caseItem.category}</Text>
             </View>
           </View>
 
           {/* 描述 */}
           <View style={styles.descriptionSection}>
-            <Text style={styles.sectionTitle}>案例描述</Text>
-            <Text style={styles.description}>{caseItem.description}</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>案例描述</Text>
+            <Text style={[styles.description, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]}>{caseItem.description}</Text>
           </View>
 
           {/* AI提示词 */}
           <View style={styles.promptSection}>
-            <Text style={styles.sectionTitle}>AI提示词</Text>
-            <View style={styles.promptContainer}>
-              <Text style={styles.prompt}>{caseItem.prompt}</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>AI提示词</Text>
+            <View style={[styles.promptContainer, { backgroundColor: colors.border + '20', borderColor: colors.border }]}>
+              <Text style={[styles.prompt, { color: colors.text }]}>{caseItem.prompt}</Text>
             </View>
           </View>
 
           {/* 标签 */}
           <View style={styles.tagsSection}>
-            <Text style={styles.sectionTitle}>相关标签</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>相关标签</Text>
             <View style={styles.tagsContainer}>
               {caseItem.tags.map((tag, index) => (
-                <View key={index} style={styles.tag}>
-                  <Text style={styles.tagText}>#{tag}</Text>
+                <View key={index} style={[styles.tag, { backgroundColor: colors.border + '20', borderColor: colors.border }]}>
+                  <Text style={[styles.tagText, { color: colors.tabIconDefault }]}>#{tag}</Text>
                 </View>
               ))}
             </View>
           </View>
 
           {/* 创建时间 */}
-          <View style={styles.timeSection}>
-            <Text style={styles.timeText}>
+          <View style={[styles.timeSection, { borderTopColor: colors.border }]}>
+            <Text style={[styles.timeText, { color: colors.tabIconDefault }]}>
               创建时间: {new Date(caseItem.createdAt).toLocaleString('zh-CN')}
             </Text>
           </View>
@@ -315,6 +320,7 @@ export default function CaseDetailScreen() {
           images={allImages}
           initialIndex={currentImageIndex}
           onClose={() => setShowImageViewer(false)}
+          colors={colors}
         />
       )}
     </View>
@@ -328,7 +334,8 @@ const ImageViewerModal: React.FC<{
   images: any[];
   initialIndex: number;
   onClose: () => void;
-}> = ({ images, initialIndex, onClose }) => {
+  colors: any;
+}> = ({ images, initialIndex, onClose, colors }) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const scrollViewRef = React.useRef<ScrollView>(null);
 
@@ -398,7 +405,7 @@ const ImageViewerModal: React.FC<{
               key={index}
               style={[
                 styles.viewerThumbnail,
-                index === currentIndex && styles.viewerThumbnailActive
+                index === currentIndex && [styles.viewerThumbnailActive, { borderColor: colors.primary }]
               ]}
               onPress={() => handleThumbnailPress(index)}
               activeOpacity={0.7}
@@ -435,7 +442,7 @@ const ImageViewerModal: React.FC<{
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff', // 动态设置
   },
   
   loadingContainer: {
@@ -446,7 +453,7 @@ const styles = StyleSheet.create({
   
   loadingText: {
     fontSize: 16,
-    color: '#666',
+    // color: '#666', // 动态设置
   },
   
   errorContainer: {
@@ -457,7 +464,7 @@ const styles = StyleSheet.create({
   
   errorText: {
     fontSize: 16,
-    color: '#666',
+    // color: '#666', // 动态设置
   },
 
   // 顶部导航栏
@@ -468,21 +475,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
-    backgroundColor: '#fff',
+    // borderBottomColor: '#e9ecef', // 动态设置
+    // backgroundColor: '#fff', // 动态设置
   },
   
   backButton: {
     padding: 8,
     borderRadius: 20,
-    backgroundColor: '#f0f0f0',
+    // backgroundColor: '#f0f0f0', // 动态设置
   },
   
   headerTitle: {
     flex: 1,
     fontSize: 18,
     fontWeight: '700',
-    color: '#333',
+    // color: '#333', // 动态设置
     marginHorizontal: 16,
     textAlign: 'center',
   },
@@ -495,7 +502,7 @@ const styles = StyleSheet.create({
   actionButton: {
     padding: 8,
     borderRadius: 20,
-    backgroundColor: '#f0f0f0',
+    // backgroundColor: '#f0f0f0', // 动态设置
   },
   
   favoriteButtonAnimating: {
@@ -595,7 +602,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '800',
-    color: '#1a1a1a',
+    // color: '#1a1a1a', // 动态设置
     marginBottom: 12,
     lineHeight: 32,
   },
@@ -608,8 +615,8 @@ const styles = StyleSheet.create({
   
   author: {
     fontSize: 14,
-    color: '#666',
-    backgroundColor: '#f0f0f0',
+    // color: '#666', // 动态设置
+    // backgroundColor: '#f0f0f0', // 动态设置
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
@@ -618,8 +625,8 @@ const styles = StyleSheet.create({
   
   category: {
     fontSize: 14,
-    color: '#007AFF',
-    backgroundColor: '#e3f2fd',
+    // color: '#007AFF', // 动态设置
+    // backgroundColor: '#e3f2fd', // 动态设置
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
@@ -634,19 +641,19 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#1a1a1a',
+    // color: '#1a1a1a', // 动态设置
     marginBottom: 12,
   },
   
   description: {
     fontSize: 16,
-    color: '#333',
+    // color: '#333', // 动态设置
     lineHeight: 24,
-    backgroundColor: '#f8f9fa',
+    // backgroundColor: '#f8f9fa', // 动态设置
     padding: 16,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#e9ecef',
+    // borderColor: '#e9ecef', // 动态设置
   },
 
   // 提示词区域
@@ -655,16 +662,16 @@ const styles = StyleSheet.create({
   },
   
   promptContainer: {
-    backgroundColor: '#fff3cd',
+    // backgroundColor: '#fff3cd', // 动态设置
     padding: 16,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#ffeaa7',
+    // borderColor: '#ffeaa7', // 动态设置
   },
   
   prompt: {
     fontSize: 15,
-    color: '#856404',
+    // color: '#856404', // 动态设置
     lineHeight: 22,
     fontStyle: 'italic',
   },
@@ -681,30 +688,30 @@ const styles = StyleSheet.create({
   },
   
   tag: {
-    backgroundColor: '#f8f9fa',
+    // backgroundColor: '#f8f9fa', // 动态设置
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#e9ecef',
+    // borderColor: '#e9ecef', // 动态设置
   },
   
   tagText: {
     fontSize: 14,
-    color: '#666',
+    // color: '#666', // 动态设置
     fontWeight: '500',
   },
 
   // 时间区域
   timeSection: {
     borderTopWidth: 1,
-    borderTopColor: '#e9ecef',
+    // borderTopColor: '#e9ecef', // 动态设置
     paddingTop: 16,
   },
   
   timeText: {
     fontSize: 12,
-    color: '#999',
+    // color: '#999', // 动态设置
     textAlign: 'center',
   },
 
@@ -800,7 +807,7 @@ const styles = StyleSheet.create({
   },
   
   viewerThumbnailActive: {
-    borderColor: '#007AFF',
+    // borderColor: '#007AFF', // 动态设置
   },
   
   viewerThumbnailImage: {
