@@ -13,6 +13,7 @@ import {
   Alert,
   Platform,
   Dimensions,
+  Clipboard,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColorScheme } from 'react-native';
@@ -133,6 +134,22 @@ export default function CaseDetailScreen() {
       setFavoriteAnimating(false);
     }, 300);
   }, [caseItem, toggleFavorite, isFavorite]);
+
+  /**
+   * 复制提示词功能
+   */
+  const handleCopyPrompt = useCallback(async () => {
+    if (!caseItem) return;
+    
+    try {
+      // 使用标准的Clipboard API
+      await Clipboard.setString(caseItem.prompt);
+      Alert.alert('复制成功', '提示词已复制到剪贴板', [{ text: '确定' }]);
+    } catch (error) {
+      console.error('复制提示词失败:', error);
+      Alert.alert('复制失败', '无法复制提示词到剪贴板', [{ text: '确定' }]);
+    }
+  }, [caseItem]);
 
   // 加载状态
   if (loading) {
@@ -287,7 +304,16 @@ export default function CaseDetailScreen() {
 
           {/* AI提示词 */}
           <View style={styles.promptSection}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>AI提示词</Text>
+            <View style={styles.promptHeader}>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>AI提示词</Text>
+              <TouchableOpacity 
+                style={[styles.copyButton, { backgroundColor: colors.border + '20' }]}
+                onPress={handleCopyPrompt}
+              >
+                <Ionicons name="copy-outline" size={18} color={colors.text} />
+                <Text style={[styles.copyButtonText, { color: colors.text }]}>复制</Text>
+              </TouchableOpacity>
+            </View>
             <View style={[styles.promptContainer, { backgroundColor: colors.border + '20', borderColor: colors.border }]}>
               <Text style={[styles.prompt, { color: colors.text }]}>{caseItem.prompt}</Text>
             </View>
@@ -659,6 +685,27 @@ const styles = StyleSheet.create({
   // 提示词区域
   promptSection: {
     marginBottom: 24,
+  },
+  
+  promptHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  
+  copyButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    gap: 4,
+  },
+  
+  copyButtonText: {
+    fontSize: 14,
+    fontWeight: '500',
   },
   
   promptContainer: {
