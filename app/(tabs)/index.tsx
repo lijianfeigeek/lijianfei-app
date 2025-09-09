@@ -4,6 +4,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { CaseList } from '../../components/CaseList';
 import { generateMockCases } from '../../data/mockData';
 import { Case } from '../../types';
@@ -13,8 +14,9 @@ import { Case } from '../../types';
  * 展示所有AI生成案例，支持下拉刷新和导航到详情页
  */
 export default function CasesScreen() {
-  // 获取设备安全区域信息
+  // 获取设备安全区域信息和路由器
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   
   // 状态管理 - 教学重点：React Hooks使用
   const [cases, setCases] = useState<Case[]>([]);
@@ -83,20 +85,10 @@ export default function CasesScreen() {
    * 导航到案例详情页面
    */
   const handleCasePress = useCallback((caseItem: Case) => {
-    // TODO: 实现导航到详情页的逻辑
-    console.log('点击案例:', caseItem.title);
-    Alert.alert(
-      '案例详情',
-      `你点击了案例: ${caseItem.title}\n\n${caseItem.description}`,
-      [
-        { text: '取消', style: 'cancel' },
-        { text: '查看详情', onPress: () => {
-          // 这里将实现导航到详情页
-          console.log('导航到详情页，案例ID:', caseItem.id);
-        }}
-      ]
-    );
-  }, []);
+    // 使用Expo Router导航到详情页面
+    console.log('导航到详情页，案例ID:', caseItem.id);
+    router.push(`/case/${caseItem.id}`);
+  }, [router]);
 
   /**
    * 组件挂载时加载数据

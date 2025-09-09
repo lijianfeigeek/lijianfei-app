@@ -35,6 +35,9 @@ export default function CasesLayout() {
         tabBarInactiveTintColor: '#999',
         tabBarLabelStyle: styles.tabBarLabel,
         headerStyle: [
+
+
+          
           styles.header,
           {
             // 为iPhone适配顶部安全区域
