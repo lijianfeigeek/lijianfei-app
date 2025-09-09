@@ -47,9 +47,7 @@ export const CaseList: React.FC<CaseListProps> = ({
       {/* 案例图片容器 */}
       <View style={styles.imageContainer}>
         <Image
-          source={{ 
-            uri: item.outputImages[0] || 'https://via.placeholder.com/400x200'
-          }}
+          source={item.outputImages[0] || require('../assets/images/adaptive-icon.png')}
           style={styles.caseImage}
           resizeMode="cover"
           // 图片加载错误处理

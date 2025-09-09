@@ -2,6 +2,12 @@
 // 教学要点：TypeScript接口定义，React Native常用数据类型，类型安全
 
 /**
+ * 图片资源类型
+ * React Native 中使用 require() 返回的图片资源类型
+ */
+export type ImageResource = number | any;
+
+/**
  * 案例数据接口
  * 定义了Nano Banana AI生成案例的完整数据结构
  */
@@ -10,8 +16,8 @@ export interface Case {
   title: string;                 // 案例标题 - 在列表和详情页显示
   description: string;           // 案例描述 - 详细说明案例内容
   prompt: string;                // AI生成提示词 - 展示如何生成该图片
-  inputImages: string[];         // 输入图片路径数组 - 原始参考图片
-  outputImages: string[];        // 输出图片路径数组 - AI生成结果图片
+  inputImages: ImageResource[];  // 输入图片资源数组 - 原始参考图片
+  outputImages: ImageResource[]; // 输出图片资源数组 - AI生成结果图片
   author: string;                // 案例作者 - 来源Twitter或其他平台
   category: string;              // 案例分类 - 用于筛选功能
   tags: string[];               // 标签数组 - 用于搜索和分类

@@ -1,7 +1,27 @@
 // data/mockData.ts - 模拟数据生成
-// 教学要点：数据结构设计，模拟真实数据，TypeScript类型使用
+// 教学要点：数据结构设计，模拟真实数据，TypeScript类型使用，资源管理
 
 import { Case } from '../types';
+import { getCaseImageResources, placeholderImage } from './imageMap';
+
+/**
+ * 获取案例目录中实际存在的图片文件
+ * @param caseNum 案例编号
+ * @returns 包含输入和输出图片资源的对象
+ */
+const getCaseImages = (caseNum: number): { inputImages: any[]; outputImages: any[] } => {
+  try {
+    return getCaseImageResources(caseNum);
+  } catch (error) {
+    console.warn(`无法加载案例 ${caseNum} 的图片资源:`, error);
+    
+    // 返回占位符图片
+    return {
+      inputImages: [placeholderImage],
+      outputImages: [placeholderImage]
+    };
+  }
+};
 
 /**
  * 生成模拟案例数据
@@ -56,19 +76,16 @@ export const generateMockCases = (): Case[] => {
 
   // 生成完整的案例数据
   caseData.forEach((data, index) => {
+    const caseNum = index + 1;
+    const { inputImages, outputImages } = getCaseImages(caseNum);
+    
     const caseItem: Case = {
-      id: index + 1,
+      id: caseNum,
       title: data.title,
       description: data.description,
       prompt: data.prompt,
-      inputImages: [
-        `/Users/lijianfei/Desktop/Awesome-Nano-Banana-images/images/case${index + 1}/input.jpg`,
-        `/Users/lijianfei/Desktop/Awesome-Nano-Banana-images/images/case${index + 1}/input0.jpg`
-      ],
-      outputImages: [
-        `/Users/lijianfei/Desktop/Awesome-Nano-Banana-images/images/case${index + 1}/output.jpg`,
-        `/Users/lijianfei/Desktop/Awesome-Nano-Banana-images/images/case${index + 1}/output0.jpg`
-      ],
+      inputImages,
+      outputImages,
       author: data.author,
       category: data.category,
       tags: data.tags,
@@ -91,20 +108,18 @@ export const generateMockCases = (): Case[] => {
   ];
 
   for (let i = caseData.length; i < 47; i++) {
+    const caseNum = i + 1;
     const category = additionalCategories[Math.floor(Math.random() * additionalCategories.length)];
     const author = additionalAuthors[Math.floor(Math.random() * additionalAuthors.length)];
+    const { inputImages, outputImages } = getCaseImages(caseNum);
     
     const caseItem: Case = {
-      id: i + 1,
-      title: `AI生成案例 ${i + 1}`,
+      id: caseNum,
+      title: `AI生成案例 ${caseNum}`,
       description: `这是一个展示AI在${category}方面能力的精彩案例`,
       prompt: `生成一个展示${category}能力的图片，要求细节丰富，创意独特`,
-      inputImages: [
-        `/Users/lijianfei/Desktop/Awesome-Nano-Banana-images/images/case${i + 1}/input.jpg`
-      ],
-      outputImages: [
-        `/Users/lijianfei/Desktop/Awesome-Nano-Banana-images/images/case${i + 1}/output.jpg`
-      ],
+      inputImages,
+      outputImages,
       author: author,
       category: category,
       tags: [category, "AI", "生成", "创意"],
