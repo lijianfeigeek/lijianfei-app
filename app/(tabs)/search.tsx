@@ -55,7 +55,7 @@ export default function SearchScreen() {
       setCases(mockCases);
       setCategories(caseCategories);
       setAllTags(tags);
-      setFilteredCases(mockCases);
+      setFilteredCases([]);
       
     } catch (error) {
       console.error('加载数据失败:', error);
@@ -69,6 +69,12 @@ export default function SearchScreen() {
    * 核心搜索逻辑实现
    */
   const filterCases = useCallback(() => {
+    // 如果没有搜索查询、分类和标签，则显示空结果
+    if (!searchQuery.trim() && !selectedCategory && selectedTags.length === 0) {
+      setFilteredCases([]);
+      return;
+    }
+
     let filtered = cases;
 
     // 按搜索关键词过滤
@@ -262,20 +268,27 @@ export default function SearchScreen() {
   };
 
   // 渲染搜索结果统计
-  const renderSearchStats = () => (
-    <View style={styles.searchStats}>
-      <Text style={styles.searchStatsText}>
-        找到 {filteredCases.length} 个相关案例
-        {(searchQuery || selectedCategory || selectedTags.length > 0) && (
-          <Text style={styles.searchStatsQuery}>
-            {searchQuery && ` "${searchQuery}"`}
-            {selectedCategory && ` 分类: ${selectedCategory}`}
-            {selectedTags.length > 0 && ` 标签: ${selectedTags.join(', ')}`}
-          </Text>
-        )}
-      </Text>
-    </View>
-  );
+  const renderSearchStats = () => {
+    // 只有当有搜索条件时才显示统计信息
+    if (!searchQuery.trim() && !selectedCategory && selectedTags.length === 0) {
+      return null;
+    }
+
+    return (
+      <View style={styles.searchStats}>
+        <Text style={styles.searchStatsText}>
+          找到 {filteredCases.length} 个相关案例
+          {(searchQuery || selectedCategory || selectedTags.length > 0) && (
+            <Text style={styles.searchStatsQuery}>
+              {searchQuery && ` "${searchQuery}"`}
+              {selectedCategory && ` 分类: ${selectedCategory}`}
+              {selectedTags.length > 0 && ` 标签: ${selectedTags.join(', ')}`}
+            </Text>
+          )}
+        </Text>
+      </View>
+    );
+  };
 
   if (loading) {
     return (
@@ -331,9 +344,17 @@ export default function SearchScreen() {
         ListEmptyComponent={() => (
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyIcon}>🔍</Text>
-            <Text style={styles.emptyTitle}>未找到相关案例</Text>
+            <Text style={styles.emptyTitle}>
+              {!searchQuery.trim() && !selectedCategory && selectedTags.length === 0 
+                ? '输入关键词开始搜索' 
+                : '未找到相关案例'
+              }
+            </Text>
             <Text style={styles.emptyDescription}>
-              尝试调整搜索关键词或筛选条件
+              {!searchQuery.trim() && !selectedCategory && selectedTags.length === 0 
+                ? '搜索案例、作者或标签来找到相关内容'
+                : '尝试调整搜索关键词或筛选条件'
+              }
             </Text>
           </View>
         )}
