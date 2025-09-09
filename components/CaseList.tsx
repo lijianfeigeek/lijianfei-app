@@ -13,6 +13,7 @@ import {
   Alert,
   Platform,
 } from 'react-native';
+import { useFavorites } from '../hooks/useFavorites';
 import { Case } from '../types';
 
 interface CaseListProps {
@@ -34,6 +35,7 @@ export const CaseList: React.FC<CaseListProps> = ({
   onRefresh,
   refreshing = false,
 }) => {
+  const { isFavorite } = useFavorites();
   /**
    * 渲染单个案例项
    * 使用TouchableOpacity提供点击反馈
@@ -62,7 +64,7 @@ export const CaseList: React.FC<CaseListProps> = ({
         />
         
         {/* 收藏标识 */}
-        {item.isFavorite && (
+        {isFavorite(item.id) && (
           <View style={styles.favoriteBadge}>
             <Text style={styles.favoriteText}>❤️</Text>
           </View>

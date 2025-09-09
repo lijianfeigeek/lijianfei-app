@@ -18,6 +18,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { generateMockCases } from '../../../data/mockData';
+import { useFavorites } from '../../../hooks/useFavorites';
 import { Case } from '../../../types';
 
 /**
@@ -37,6 +38,9 @@ export default function CaseDetailScreen() {
   const [showImageViewer, setShowImageViewer] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
   const [favoriteAnimating, setFavoriteAnimating] = useState(false);
+  
+  // 收藏功能
+  const { toggleFavorite, isFavorite } = useFavorites();
 
   // 模拟数据获取
   React.useEffect(() => {
@@ -101,21 +105,30 @@ export default function CaseDetailScreen() {
   /**
    * 收藏功能
    */
-  const handleToggleFavorite = useCallback(() => {
+  const handleToggleFavorite = useCallback(async () => {
     if (!caseItem) return;
     
     setFavoriteAnimating(true);
     
-    const updatedCase = {
-      ...caseItem,
-      isFavorite: !caseItem.isFavorite,
-    };
-    setCaseItem(updatedCase);
+    try {
+      await toggleFavorite(caseItem);
+      
+      // 显示操作反馈
+      const isNowFavorite = !isFavorite(caseItem.id);
+      Alert.alert(
+        isNowFavorite ? '已添加到收藏' : '已取消收藏',
+        `"${caseItem.title}"${isNowFavorite ? '已添加到收藏列表' : '已从收藏列表移除'}`,
+        [{ text: '确定' }]
+      );
+    } catch (error) {
+      console.error('切换收藏状态失败:', error);
+      Alert.alert('错误', '无法更新收藏状态');
+    }
     
     setTimeout(() => {
       setFavoriteAnimating(false);
     }, 300);
-  }, [caseItem]);
+  }, [caseItem, toggleFavorite, isFavorite]);
 
   // 加载状态
   if (loading) {
@@ -166,9 +179,9 @@ export default function CaseDetailScreen() {
             onPress={handleToggleFavorite}
           >
             <Ionicons 
-              name={caseItem.isFavorite ? "heart" : "heart-outline"} 
+              name={isFavorite(caseItem.id) ? "heart" : "heart-outline"} 
               size={22} 
-              color={caseItem.isFavorite ? "#ff3b30" : "#333"} 
+              color={isFavorite(caseItem.id) ? "#ff3b30" : "#333"} 
               style={[
                 favoriteAnimating && styles.favoriteIconAnimating
               ]}
@@ -800,7 +813,7 @@ const styles = StyleSheet.create({
 
 // 平台特定样式
 if (Platform.OS === 'android') {
-  styles.header = { ...styles.header, elevation: 4 };
-  styles.actionButton = { ...styles.actionButton, elevation: 2 };
-  styles.backButton = { ...styles.backButton, elevation: 2 };
+  styles.header = { ...styles.header, elevation: 4 } as any;
+  styles.actionButton = { ...styles.actionButton, elevation: 2 } as any;
+  styles.backButton = { ...styles.backButton, elevation: 2 } as any;
 }

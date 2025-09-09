@@ -1,7 +1,7 @@
 // app/(tabs)/favorites.tsx - 收藏页面
 // 教学要点：本地存储，状态管理，收藏功能，数据持久化
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import {
   View,
   Text,
@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons as HeartIcon, Ionicons as TrashIcon, Ionicons as ShareIcon } from '@expo/vector-icons';
-import { generateMockCases } from '../../data/mockData';
+import { useFavorites } from '../../hooks/useFavorites';
 import { Case } from '../../types';
 
 /**
@@ -22,134 +22,14 @@ import { Case } from '../../types';
  * 展示用户收藏的案例，支持取消收藏、分享等功能
  */
 export default function FavoritesScreen() {
-  // 获取设备安全区域信息
+  // 获取设备安全区域信息和收藏状态
   const insets = useSafeAreaInsets();
-  
-  // 状态管理
-  const [cases, setCases] = useState<Case[]>([]);
-  const [favoriteCases, setFavoriteCases] = useState<Case[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  /**
-   * 加载案例数据
-   * 从本地存储或模拟数据加载
-   */
-  const loadData = useCallback(async () => {
-    try {
-      setLoading(true);
-      
-      // 模拟网络请求
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const mockCases = generateMockCases();
-      
-      // 为演示目的，随机设置一些案例为收藏状态
-      const casesWithFavorites = mockCases.map((caseItem, index) => ({
-        ...caseItem,
-        isFavorite: index % 5 === 0 // 每5个案例中有一个是收藏的
-      }));
-      
-      setCases(casesWithFavorites);
-      
-      // 过滤出收藏的案例
-      const favorites = casesWithFavorites.filter(caseItem => caseItem.isFavorite);
-      setFavoriteCases(favorites);
-      
-      // TODO: 从AsyncStorage加载收藏状态
-      // const storedFavorites = await AsyncStorage.getItem('favorites');
-      // if (storedFavorites) {
-      //   const favoriteIds = JSON.parse(storedFavorites);
-      //   const favorites = casesWithFavorites.filter(caseItem => 
-      //     favoriteIds.includes(caseItem.id)
-      //   );
-      //   setFavoriteCases(favorites);
-      // }
-      
-    } catch (error) {
-      console.error('加载数据失败:', error);
-      Alert.alert('错误', '无法加载收藏数据');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  /**
-   * 切换收藏状态
-   * 核心收藏功能实现
-   */
-  const toggleFavorite = useCallback(async (caseId: number) => {
-    try {
-      // 更新案例数据
-      const updatedCases = cases.map(caseItem => 
-        caseItem.id === caseId 
-          ? { ...caseItem, isFavorite: !caseItem.isFavorite }
-          : caseItem
-      );
-      
-      setCases(updatedCases);
-      
-      // 更新收藏列表
-      const favorites = updatedCases.filter(caseItem => caseItem.isFavorite);
-      setFavoriteCases(favorites);
-      
-      // TODO: 保存到AsyncStorage
-      // const favoriteIds = favorites.map(f => f.id);
-      // await AsyncStorage.setItem('favorites', JSON.stringify(favoriteIds));
-      
-      // 显示操作反馈
-      const caseItem = cases.find(c => c.id === caseId);
-      if (caseItem) {
-        const isNowFavorite = !caseItem.isFavorite;
-        Alert.alert(
-          isNowFavorite ? '已添加到收藏' : '已取消收藏',
-          `"${caseItem.title}"${isNowFavorite ? '已添加到收藏列表' : '已从收藏列表移除'}`,
-          [{ text: '确定' }]
-        );
-      }
-      
-    } catch (error) {
-      console.error('更新收藏状态失败:', error);
-      Alert.alert('错误', '无法更新收藏状态');
-    }
-  }, [cases]);
-
-  /**
-   * 取消所有收藏
-   */
-  const clearAllFavorites = useCallback(() => {
-    Alert.alert(
-      '清除所有收藏',
-      '确定要清除所有收藏的案例吗？此操作不可恢复。',
-      [
-        { text: '取消', style: 'cancel' },
-        { 
-          text: '确定', 
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              // 更新所有案例的收藏状态
-              const updatedCases = cases.map(caseItem => ({
-                ...caseItem,
-                isFavorite: false
-              }));
-              
-              setCases(updatedCases);
-              setFavoriteCases([]);
-              
-              // TODO: 清除AsyncStorage中的收藏数据
-              // await AsyncStorage.removeItem('favorites');
-              
-              Alert.alert('成功', '已清除所有收藏');
-              
-            } catch (error) {
-              console.error('清除收藏失败:', error);
-              Alert.alert('错误', '无法清除收藏数据');
-            }
-          }
-        }
-      ]
-    );
-  }, [cases]);
+  const { 
+    favoriteCases, 
+    isLoading, 
+    toggleFavorite, 
+    clearAllFavorites 
+  } = useFavorites();
 
   /**
    * 分享案例
@@ -170,11 +50,30 @@ export default function FavoritesScreen() {
   }, []);
 
   /**
-   * 组件挂载时加载数据
+   * 取消所有收藏
    */
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
+  const handleClearAllFavorites = useCallback(() => {
+    Alert.alert(
+      '清除所有收藏',
+      '确定要清除所有收藏的案例吗？此操作不可恢复。',
+      [
+        { text: '取消', style: 'cancel' },
+        { 
+          text: '确定', 
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await clearAllFavorites();
+              Alert.alert('成功', '已清除所有收藏');
+            } catch (error) {
+              console.error('清除收藏失败:', error);
+              Alert.alert('错误', '无法清除收藏数据');
+            }
+          }
+        }
+      ]
+    );
+  }, [clearAllFavorites]);
 
   // 渲染收藏案例项
   const renderFavoriteItem = ({ item }: { item: Case }) => (
@@ -202,7 +101,7 @@ export default function FavoritesScreen() {
       <View style={styles.favoriteActions}>
         <TouchableOpacity 
           style={[styles.actionButton, styles.unfavoriteButton]}
-          onPress={() => toggleFavorite(item.id)}
+          onPress={() => toggleFavorite(item)}
         >
           <HeartIcon name="heart" size={16} color="#fff" />
         </TouchableOpacity>
@@ -237,7 +136,7 @@ export default function FavoritesScreen() {
       {favoriteCases.length > 0 && (
         <TouchableOpacity 
           style={styles.clearButton}
-          onPress={clearAllFavorites}
+          onPress={handleClearAllFavorites}
         >
           <TrashIcon name="trash" size={16} color="#f44336" />
           <Text style={styles.clearButtonText}>清除所有</Text>
@@ -246,7 +145,7 @@ export default function FavoritesScreen() {
     </View>
   );
 
-  if (loading) {
+  if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#007AFF" />

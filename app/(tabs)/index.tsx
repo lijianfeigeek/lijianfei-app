@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { CaseList } from '../../components/CaseList';
 import { generateMockCases } from '../../data/mockData';
+import { useFavorites } from '../../hooks/useFavorites';
 import { Case } from '../../types';
 
 /**
@@ -23,6 +24,9 @@ export default function CasesScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // 收藏功能
+  const { refreshFavorites } = useFavorites();
 
   /**
    * 加载案例数据
@@ -75,10 +79,11 @@ export default function CasesScreen() {
     setRefreshing(true);
     try {
       await loadCases();
+      await refreshFavorites();
     } finally {
       setRefreshing(false);
     }
-  }, [loadCases]);
+  }, [loadCases, refreshFavorites]);
 
   /**
    * 处理案例点击事件
