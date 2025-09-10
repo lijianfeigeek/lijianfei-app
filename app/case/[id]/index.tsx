@@ -44,7 +44,7 @@ export default function CaseDetailScreen() {
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showImageViewer, setShowImageViewer] = useState(false);
-  const [imageLoading, setImageLoading] = useState(true);
+  const [imageLoadingStates, setImageLoadingStates] = useState<boolean[]>([]);
   const [favoriteAnimating, setFavoriteAnimating] = useState(false);
   
   // 收藏功能
@@ -66,6 +66,9 @@ export default function CaseDetailScreen() {
         
         if (foundCase) {
           setCaseItem(foundCase);
+          // 初始化图片加载状态
+          const allImages = [...(foundCase.inputImages || []), ...(foundCase.outputImages || [])];
+          setImageLoadingStates(allImages.map(() => true));
         } else {
           Alert.alert(
             t('alerts.error'), 
@@ -95,6 +98,17 @@ export default function CaseDetailScreen() {
   const handleImagePress = useCallback((index: number) => {
     setCurrentImageIndex(index);
     setShowImageViewer(true);
+  }, []);
+
+  /**
+   * 更新图片加载状态
+   */
+  const updateImageLoadingState = useCallback((index: number, isLoading: boolean) => {
+    setImageLoadingStates(prev => {
+      const newStates = [...prev];
+      newStates[index] = isLoading;
+      return newStates;
+    });
   }, []);
 
 
@@ -271,18 +285,32 @@ export default function CaseDetailScreen() {
                   source={image}
                   style={styles.mainImage}
                   resizeMode="contain"
-                  onLoadStart={() => setImageLoading(true)}
-                  onLoadEnd={() => setImageLoading(false)}
+                  onLoadStart={() => {
+                    console.log(`图片 ${index} 开始加载`);
+                    updateImageLoadingState(index, true);
+                  }}
+                  onLoad={() => {
+                    console.log(`图片 ${index} 加载成功`);
+                    updateImageLoadingState(index, false);
+                  }}
                   onError={(e) => {
-                    console.log('图片加载错误:', e.nativeEvent.error);
-                    setImageLoading(false);
+                    console.error(`图片 ${index} 加载错误:`, e.nativeEvent.error);
+                    console.log(`图片 ${index} 的source:`, image);
+                    updateImageLoadingState(index, false);
                   }}
                 />
                 
                 {/* 图片加载指示器 */}
-                {imageLoading && (
+                {imageLoadingStates[index] && (
                   <View style={styles.imageLoadingOverlay}>
                     <Text style={[styles.loadingText, { color: colors.text }]}>{t('common.loading')}</Text>
+                  </View>
+                )}
+                
+                {/* 图片加载失败占位符 */}
+                {!imageLoadingStates[index] && (
+                  <View style={styles.imageSuccessOverlay}>
+                    <Ionicons name="checkmark-circle" size={24} color="#4CAF50" />
                   </View>
                 )}
                 
@@ -630,6 +658,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  
+  imageSuccessOverlay: {
+    position: 'absolute',
+    top: 16,
+    left: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 12,
+    padding: 4,
   },
   
   imageIndicator: {
