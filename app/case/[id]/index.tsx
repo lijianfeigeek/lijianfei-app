@@ -9,7 +9,6 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
-  Share,
   Alert,
   Platform,
   Dimensions,
@@ -98,22 +97,6 @@ export default function CaseDetailScreen() {
     setShowImageViewer(true);
   }, []);
 
-  /**
-   * 分享功能
-   */
-  const handleShare = useCallback(async () => {
-    if (!caseItem) return;
-    
-    try {
-      await Share.share({
-        title: `Nano Banana AI案例: ${caseItem.title}`,
-        message: `${caseItem.title}\n\n${caseItem.description}\n\n来自 Nano Banana AI`,
-        url: 'https://github.com/yourusername/Awesome-Nano-Banana-images',
-      });
-    } catch (error) {
-      console.error('分享失败:', error);
-    }
-  }, [caseItem]);
 
   /**
    * 收藏功能
@@ -257,13 +240,6 @@ export default function CaseDetailScreen() {
                 favoriteAnimating && styles.favoriteIconAnimating
               ]}
             />
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={[styles.actionButton, { backgroundColor: colors.border + '20' }]}
-            onPress={handleShare}
-          >
-            <Ionicons name="share-outline" size={22} color={colors.text} />
           </TouchableOpacity>
         </View>
       </View>
