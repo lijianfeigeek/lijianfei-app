@@ -13,6 +13,8 @@ export type ImageResource = number | any;
 export interface LocalizedText {
   zh: string;  // 中文
   en: string;  // 英文
+  ja: string;  // 日语
+  ko: string;  // 韩语
 }
 
 /**

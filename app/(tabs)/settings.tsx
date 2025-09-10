@@ -11,6 +11,7 @@ import {
   Alert,
   Linking,
   ScrollView,
+  Modal,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColorScheme, Appearance } from 'react-native';
@@ -37,6 +38,7 @@ export default function SettingsScreen() {
   
   // 状态管理 - 教学重点：设置项的状态管理
   const [darkMode, setDarkMode] = useState(colorScheme === 'dark');
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
 
   // 监听系统主题变化
   useEffect(() => {
@@ -62,6 +64,28 @@ export default function SettingsScreen() {
       `${t('settings.darkMode')}${value ? t('settings.darkModeEnabledAlert') : t('settings.darkModeDisabledAlert')}`,
       [{ text: t('common.confirm') }]
     );
+  };
+
+  /**
+   * 获取当前语言显示名称
+   */
+  const getCurrentLanguageName = () => {
+    const languages = [
+      { code: 'zh', name: '中文', nativeName: '中文' },
+      { code: 'en', name: 'English', nativeName: 'English' },
+      { code: 'ja', name: 'Japanese', nativeName: '日本語' },
+      { code: 'ko', name: 'Korean', nativeName: '한국어' },
+    ];
+    const currentLang = languages.find(lang => lang.code === currentLanguage);
+    return currentLang ? currentLang.nativeName : '中文';
+  };
+
+  /**
+   * 切换语言
+   */
+  const handleLanguageSelect = (languageCode: string) => {
+    switchLanguage(languageCode);
+    setShowLanguageModal(false);
   };
 
 
@@ -164,17 +188,14 @@ export default function SettingsScreen() {
             {renderSettingItem({
               icon: <Ionicons name="language" size={20} color={colors.primary} />,
               title: '语言',
-              subtitle: currentLanguage === 'zh' ? '中文' : 'English',
+              subtitle: getCurrentLanguageName(),
               children: (
                 <TouchableOpacity 
                   style={[styles.actionButton, { backgroundColor: colors.primary + '20' }]} 
-                  onPress={() => {
-                    const newLanguage = currentLanguage === 'zh' ? 'en' : 'zh';
-                    switchLanguage(newLanguage);
-                  }}
+                  onPress={() => setShowLanguageModal(true)}
                 >
                   <Text style={[styles.actionButtonText, { color: colors.primary }]}>
-                    {currentLanguage === 'zh' ? 'English' : '中文'}
+                    切换
                   </Text>
                 </TouchableOpacity>
               ),
@@ -216,6 +237,68 @@ export default function SettingsScreen() {
           </>
         ),
       })}
+      
+      {/* 语言选择弹窗 */}
+      <Modal
+        visible={showLanguageModal}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={() => setShowLanguageModal(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={[styles.languageSelector, { backgroundColor: colors.card }]}>
+            {/* 标题栏 */}
+            <View style={[styles.selectorHeader, { borderBottomColor: colors.border }]}>
+              <Text style={[styles.selectorTitle, { color: colors.text }]}>选择语言</Text>
+              <TouchableOpacity 
+                style={styles.closeButton}
+                onPress={() => setShowLanguageModal(false)}
+              >
+                <Ionicons name="close" size={22} color={colors.text} />
+              </TouchableOpacity>
+            </View>
+            
+            {/* 语言选项 */}
+            <View style={styles.languageOptions}>
+              {[
+                { code: 'zh', name: '中文', nativeName: '中文', flag: '🇨🇳' },
+                { code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸' },
+                { code: 'ja', name: 'Japanese', nativeName: '日本語', flag: '🇯🇵' },
+                { code: 'ko', name: 'Korean', nativeName: '한국어', flag: '🇰🇷' },
+              ].map((item) => (
+                <TouchableOpacity
+                  key={item.code}
+                  style={[
+                    styles.languageOption,
+                    {
+                      backgroundColor: currentLanguage === item.code ? colors.primary + '15' : 'transparent',
+                      borderColor: currentLanguage === item.code ? colors.primary : colors.border,
+                    }
+                  ]}
+                  onPress={() => handleLanguageSelect(item.code)}
+                >
+                  <View style={styles.languageInfo}>
+                    <Text style={styles.languageFlag}>{item.flag}</Text>
+                    <View style={styles.languageTextContainer}>
+                      <Text style={[styles.languageName, { color: colors.text }]}>
+                        {item.nativeName}
+                      </Text>
+                      <Text style={[styles.languageEnglishName, { color: colors.tabIconDefault }]}>
+                        {item.name}
+                      </Text>
+                    </View>
+                  </View>
+                  {currentLanguage === item.code && (
+                    <View style={[styles.selectedIndicator, { backgroundColor: colors.primary }]}>
+                      <Ionicons name="checkmark" size={16} color="#ffffff" />
+                    </View>
+                  )}
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -285,6 +368,102 @@ const styles = StyleSheet.create({
   actionButtonText: {
     fontSize: 12,
     fontWeight: '600',
+  },
+
+  // 新的弹窗样式
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+  },
+
+  languageSelector: {
+    width: '85%',
+    maxWidth: 400,
+    borderRadius: 20,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+
+  selectorHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomWidth: 1,
+  },
+
+  selectorTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+  },
+
+  closeButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  languageOptions: {
+    padding: 8,
+  },
+
+  languageOption: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    marginVertical: 4,
+    borderRadius: 12,
+    borderWidth: 1,
+    marginHorizontal: 8,
+  },
+
+  languageInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+
+  languageFlag: {
+    fontSize: 28,
+    marginRight: 16,
+  },
+
+  languageTextContainer: {
+    flex: 1,
+  },
+
+  languageName: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+
+  languageEnglishName: {
+    fontSize: 14,
+    fontWeight: '400',
+    opacity: 0.7,
+  },
+
+  selectedIndicator: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

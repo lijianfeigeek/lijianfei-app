@@ -5,6 +5,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // 导入翻译文件
 import en from '../locales/en.json';
 import zh from '../locales/zh.json';
+import ja from '../locales/ja.json';
+import ko from '../locales/ko.json';
 
 // 语言存储键名
 const LANGUAGE_STORAGE_KEY = 'app_language';
@@ -36,6 +38,12 @@ const resources = {
   },
   zh: {
     translation: zh,
+  },
+  ja: {
+    translation: ja,
+  },
+  ko: {
+    translation: ko,
   },
 };
 
@@ -87,6 +95,8 @@ export const getAvailableLanguages = () => {
   return [
     { code: 'zh', name: '中文', nativeName: '中文' },
     { code: 'en', name: 'English', nativeName: 'English' },
+    { code: 'ja', name: 'Japanese', nativeName: '日本語' },
+    { code: 'ko', name: 'Korean', nativeName: '한국어' },
   ];
 };
 
