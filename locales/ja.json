@@ -68,7 +68,10 @@
     "about": "について",
     "aboutHint": "バージョン 1.0.0",
     "aboutAlert": "Nano Banana AIについて",
-    "aboutContent": "バージョン: 1.0.0\n\nAwesome-Nano-Banana-imagesプロジェクトに基づいて構築されたモバイルショーケースアプリ。\n\n素晴らしいAI生成クリエイティブ作品を展示しています。"
+    "aboutContent": "バージョン: 1.0.0\n\nAwesome-Nano-Banana-imagesプロジェクトに基づいて構築されたモバイルショーケースアプリ。\n\n素晴らしいAI生成クリエイティブ作品を展示しています。",
+    "language": "言語",
+    "languageSwitch": "切り替え",
+    "selectLanguage": "言語を選択"
   },
   "case": {
     "author": "作成者",

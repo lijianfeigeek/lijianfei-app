@@ -68,7 +68,10 @@
     "about": "About",
     "aboutHint": "Version 1.0.0",
     "aboutAlert": "About Nano Banana AI",
-    "aboutContent": "Version: 1.0.0\n\nMobile showcase app built based on Awesome-Nano-Banana-images project.\n\nShowcasing wonderful AI-generated creative works."
+    "aboutContent": "Version: 1.0.0\n\nMobile showcase app built based on Awesome-Nano-Banana-images project.\n\nShowcasing wonderful AI-generated creative works.",
+    "language": "Language",
+    "languageSwitch": "Switch",
+    "selectLanguage": "Select Language"
   },
   "case": {
     "author": "Author",

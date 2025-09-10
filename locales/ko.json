@@ -68,7 +68,10 @@
     "about": "정보",
     "aboutHint": "버전 1.0.0",
     "aboutAlert": "Nano Banana AI 정보",
-    "aboutContent": "버전: 1.0.0\n\nAwesome-Nano-Banana-images 프로젝트를 기반으로 구축된 모바일 쇼케이스 앱.\n\n뛰어난 AI 생성 크리에이티브 작품을 전시합니다."
+    "aboutContent": "버전: 1.0.0\n\nAwesome-Nano-Banana-images 프로젝트를 기반으로 구축된 모바일 쇼케이스 앱.\n\n뛰어난 AI 생성 크리에이티브 작품을 전시합니다.",
+    "language": "언어",
+    "languageSwitch": "전환",
+    "selectLanguage": "언어 선택"
   },
   "case": {
     "author": "작성자",

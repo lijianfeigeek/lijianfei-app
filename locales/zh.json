@@ -68,7 +68,10 @@
     "about": "关于",
     "aboutHint": "版本 1.0.0",
     "aboutAlert": "关于 Nano Banana AI",
-    "aboutContent": "版本: 1.0.0\n\n基于 Awesome-Nano-Banana-images 项目构建的移动端展示应用。\n\n展示 AI 生成的精彩创意作品。"
+    "aboutContent": "版本: 1.0.0\n\n基于 Awesome-Nano-Banana-images 项目构建的移动端展示应用。\n\n展示 AI 生成的精彩创意作品。",
+    "language": "语言",
+    "languageSwitch": "切换",
+    "selectLanguage": "选择语言"
   },
   "case": {
     "author": "作者",

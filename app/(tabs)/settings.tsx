@@ -187,7 +187,7 @@ export default function SettingsScreen() {
             
             {renderSettingItem({
               icon: <Ionicons name="language" size={20} color={colors.primary} />,
-              title: '语言',
+              title: t('settings.language'),
               subtitle: getCurrentLanguageName(),
               children: (
                 <TouchableOpacity 
@@ -195,7 +195,7 @@ export default function SettingsScreen() {
                   onPress={() => setShowLanguageModal(true)}
                 >
                   <Text style={[styles.actionButtonText, { color: colors.primary }]}>
-                    切换
+                    {t('settings.languageSwitch')}
                   </Text>
                 </TouchableOpacity>
               ),
@@ -249,7 +249,7 @@ export default function SettingsScreen() {
           <View style={[styles.languageSelector, { backgroundColor: colors.card }]}>
             {/* 标题栏 */}
             <View style={[styles.selectorHeader, { borderBottomColor: colors.border }]}>
-              <Text style={[styles.selectorTitle, { color: colors.text }]}>选择语言</Text>
+              <Text style={[styles.selectorTitle, { color: colors.text }]}>{t('settings.selectLanguage')}</Text>
               <TouchableOpacity 
                 style={styles.closeButton}
                 onPress={() => setShowLanguageModal(false)}
