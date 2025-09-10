@@ -90,7 +90,7 @@ export default function SettingsScreen() {
    * 发送反馈邮件
    */
   const sendFeedback = () => {
-    Linking.openURL('mailto:support@nanobanana.com?subject=Nano Banana AI 反馈');
+    Linking.openURL('mailto:me@lijianfei.com?subject=Banana AI Case feedback');
   };
 
 
