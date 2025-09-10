@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColorScheme } from 'react-native';
-import { Ionicons as HeartIcon, Ionicons as TrashIcon, Ionicons as ShareIcon } from '@expo/vector-icons';
+import { Ionicons as HeartIcon, Ionicons as TrashIcon } from '@expo/vector-icons';
 import { useFavorites } from '../../hooks/useFavorites';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useLocalizedText } from '../../utils/localization';
@@ -40,23 +40,6 @@ export default function FavoritesScreen() {
     clearAllFavorites 
   } = useFavorites();
 
-  /**
-   * 分享案例
-   */
-  const shareCase = useCallback((caseItem: Case) => {
-    // TODO: 实现分享功能
-    Alert.alert(
-      t('case.share'),
-      `${t('case.share')} "${getText(caseItem.title)}" ${t('alerts.shareToSocial')}`,
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        { text: t('common.share'), onPress: () => {
-          // 这里将实现实际的分享功能
-          console.log('分享案例:', getText(caseItem.title));
-        }}
-      ]
-    );
-  }, [t, currentLanguage]);
 
   /**
    * 取消所有收藏
@@ -113,12 +96,6 @@ export default function FavoritesScreen() {
           onPress={() => toggleFavorite(item)}
         >
           <HeartIcon name="heart" size={16} color="#fff" />
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={[styles.actionButton, styles.shareButton]}
-          onPress={() => shareCase(item)}
-        >
-          <ShareIcon name="share" size={16} color="#fff" />
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -340,10 +317,6 @@ const styles = StyleSheet.create({
   
   unfavoriteButton: {
     backgroundColor: '#f44336',
-  },
-  
-  shareButton: {
-    backgroundColor: '#4CAF50',
   },
   
   // 空状态样式
