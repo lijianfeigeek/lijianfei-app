@@ -199,7 +199,8 @@ export const getCaseImageResources = (caseNum: number) => {
   const inputImages: any[] = [];
   const outputImages: any[] = [];
   
-  switch (caseNum) {
+  try {
+    switch (caseNum) {
     case 1:
       inputImages.push(imageMap.case1_input, imageMap.case1_input0);
       outputImages.push(imageMap.case1_output, imageMap.case1_output0);
@@ -374,6 +375,22 @@ export const getCaseImageResources = (caseNum: number) => {
       // 对于其他案例，暂时使用空的占位符
       // 实际项目中可以在这里添加更多图片映射
       break;
+    }
+  } catch (error) {
+    console.warn(`Error loading images for case ${caseNum}:`, error);
+    // 如果加载失败，返回占位符图片
+    return {
+      inputImages: [placeholderImage],
+      outputImages: [placeholderImage]
+    };
+  }
+  
+  // 如果没有找到任何图片，返回占位符
+  if (inputImages.length === 0 && outputImages.length === 0) {
+    return {
+      inputImages: [placeholderImage],
+      outputImages: [placeholderImage]
+    };
   }
   
   return { inputImages, outputImages };

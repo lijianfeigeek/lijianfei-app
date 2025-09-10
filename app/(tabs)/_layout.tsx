@@ -11,16 +11,18 @@ import {
   Ionicons as SettingsIcon 
 } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
+import { useTranslation } from '../../hooks/useTranslation';
 
 /**
  * 案例页面的Tab布局
  * 定义底部导航栏和页面结构
  */
 export default function CasesLayout() {
-  // 获取设备安全区域信息
+  // 获取设备安全区域信息和翻译功能
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const { t } = useTranslation();
   
   return (
     <Tabs
@@ -57,7 +59,7 @@ export default function CasesLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: '案例展示',
+          title: t('tabTitles.home'),
           tabBarIcon: ({ color, size }) => (
             <HomeIcon name="home" color={color} size={size} />
           ),
@@ -68,7 +70,7 @@ export default function CasesLayout() {
       <Tabs.Screen
         name="search"
         options={{
-          title: '搜索',
+          title: t('tabTitles.search'),
           tabBarIcon: ({ color, size }) => (
             <SearchIcon name="search" color={color} size={size} />
           ),
@@ -79,7 +81,7 @@ export default function CasesLayout() {
       <Tabs.Screen
         name="favorites"
         options={{
-          title: '收藏',
+          title: t('tabTitles.favorites'),
           tabBarIcon: ({ color, size }) => (
             <HeartIcon name="heart" color={color} size={size} />
           ),
@@ -90,7 +92,7 @@ export default function CasesLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          title: '设置',
+          title: t('tabTitles.settings'),
           tabBarIcon: ({ color, size }) => (
             <SettingsIcon name="settings" color={color} size={size} />
           ),

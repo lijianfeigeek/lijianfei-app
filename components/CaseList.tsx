@@ -15,6 +15,8 @@ import {
 } from 'react-native';
 import { useColorScheme } from 'react-native';
 import { useFavorites } from '../hooks/useFavorites';
+import { useTranslation } from '../hooks/useTranslation';
+import { useLocalizedText } from '../utils/localization';
 import { Case } from '../types';
 import { Colors } from '../constants/Colors';
 
@@ -38,6 +40,8 @@ export const CaseList: React.FC<CaseListProps> = ({
   refreshing = false,
 }) => {
   const { isFavorite } = useFavorites();
+  const { t, currentLanguage } = useTranslation();
+  const { getText, getTags } = useLocalizedText();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   /**
@@ -53,7 +57,7 @@ export const CaseList: React.FC<CaseListProps> = ({
       {/* 案例图片容器 */}
       <View style={styles.imageContainer}>
         <Image
-          source={item.outputImages[0] || require('../assets/images/adaptive-icon.png')}
+          source={item.outputImages && item.outputImages.length > 0 ? item.outputImages[0] : require('../assets/images/adaptive-icon.png')}
           style={styles.caseImage}
           resizeMode="cover"
           // 图片加载错误处理
@@ -63,7 +67,7 @@ export const CaseList: React.FC<CaseListProps> = ({
           }}
           // 图片加载完成回调
           onLoad={() => {
-            console.log('图片加载完成:', item.title);
+            console.log('图片加载完成:', getText(item.title));
           }}
         />
         
@@ -79,12 +83,12 @@ export const CaseList: React.FC<CaseListProps> = ({
       <View style={styles.caseInfo}>
         {/* 案例标题 */}
         <Text style={[styles.caseTitle, { color: colors.text }]} numberOfLines={2}>
-          {item.title}
+          {getText(item.title)}
         </Text>
         
         {/* 案例描述 */}
         <Text style={[styles.caseDescription, { color: colors.tabIconDefault }]} numberOfLines={3}>
-          {item.description}
+          {getText(item.description)}
         </Text>
         
         {/* 元信息行 */}
@@ -93,13 +97,13 @@ export const CaseList: React.FC<CaseListProps> = ({
             👤 {item.author}
           </Text>
           <Text style={[styles.caseCategory, { color: colors.primary, backgroundColor: colors.primary + '20' }]}>
-            📁 {item.category}
+            📁 {getText(item.category)}
           </Text>
         </View>
         
         {/* 标签列表 */}
         <View style={styles.tagsContainer}>
-          {item.tags.slice(0, 3).map((tag, index) => (
+          {getTags(item.tags).slice(0, 3).map((tag, index) => (
             <View key={index} style={[styles.tag, { backgroundColor: colors.border + '20', borderColor: colors.border }]}>
               <Text style={[styles.tagText, { color: colors.tabIconDefault }]}>#{tag}</Text>
             </View>
@@ -118,9 +122,9 @@ export const CaseList: React.FC<CaseListProps> = ({
   const ListEmptyComponent = () => (
     <View style={styles.emptyContainer}>
       <Text style={styles.emptyIcon}>📱</Text>
-      <Text style={[styles.emptyTitle, { color: colors.text }]}>暂无案例数据</Text>
+      <Text style={[styles.emptyTitle, { color: colors.text }]}>{t('home.noCases')}</Text>
       <Text style={[styles.emptyDescription, { color: colors.tabIconDefault }]}>
-        {loading ? '正在加载中...' : '请检查网络连接或稍后重试'}
+        {loading ? t('common.loading') : t('home.checkConnection')}
       </Text>
     </View>
   );
@@ -131,10 +135,10 @@ export const CaseList: React.FC<CaseListProps> = ({
   const ListHeaderComponent = () => (
     <View style={styles.header}>
       <Text style={[styles.headerTitle, { color: colors.text }]}>
-        🤖 Nano Banana AI 案例展示
+        {t('app.title')}
       </Text>
       <Text style={[styles.headerSubtitle, { color: colors.tabIconDefault }]}>
-        共 {cases.length} 个精彩案例
+        {t('home.caseCount', { count: cases.length })}
       </Text>
     </View>
   );
@@ -148,7 +152,7 @@ export const CaseList: React.FC<CaseListProps> = ({
       onRefresh={onRefresh}
       // iOS配置
       tintColor={colors.primary}
-      title="正在刷新..."
+      title={t('home.refreshing')}
       titleColor={colors.tabIconDefault}
       // Android配置
       colors={[colors.primary]}

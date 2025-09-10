@@ -24,6 +24,7 @@ import {
   Ionicons as ShareIcon 
 } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
+import { useTranslation } from '@/hooks/useTranslation';
 
 /**
  * 设置页面
@@ -34,6 +35,7 @@ export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const { t, switchLanguage, currentLanguage, availableLanguages } = useTranslation();
   
   // 状态管理 - 教学重点：设置项的状态管理
   const [darkMode, setDarkMode] = useState(colorScheme === 'dark');
@@ -58,9 +60,9 @@ export default function SettingsScreen() {
     
     // 显示切换提示
     Alert.alert(
-      '深色模式',
-      `深色模式已${value ? '开启' : '关闭'}`,
-      [{ text: '确定' }]
+      t('settings.darkModeAlert'),
+      `${t('settings.darkMode')}${value ? t('settings.darkModeEnabledAlert') : t('settings.darkModeDisabledAlert')}`,
+      [{ text: t('common.confirm') }]
     );
   };
 
@@ -74,11 +76,11 @@ export default function SettingsScreen() {
   const shareApp = () => {
     // TODO: 实现应用分享功能
     Alert.alert(
-      '分享应用',
-      '分享 Nano Banana AI 给你的朋友',
+      t('settings.shareApp'),
+      t('settings.shareAppAlert'),
       [
-        { text: '取消', style: 'cancel' },
-        { text: '分享', onPress: () => {
+        { text: t('common.cancel'), style: 'cancel' },
+        { text: t('common.share'), onPress: () => {
           console.log('分享应用');
         }}
       ]
@@ -104,9 +106,9 @@ export default function SettingsScreen() {
    */
   const showAbout = () => {
     Alert.alert(
-      '关于 Nano Banana AI',
-      '版本: 1.0.0\n\n基于 Awesome-Nano-Banana-images 项目构建的移动端展示应用。\n\n展示 AI 生成的精彩创意作品。',
-      [{ text: '确定' }]
+      t('settings.aboutAlert'),
+      t('settings.aboutContent'),
+      [{ text: t('common.confirm') }]
     );
   };
 
@@ -166,13 +168,13 @@ export default function SettingsScreen() {
     ]}>
       {/* 外观设置 */}
       {renderSettingGroup({
-        title: '外观',
+        title: t('settings.appearance'),
         children: (
           <>
             {renderSettingItem({
               icon: darkMode ? <MoonIcon name="moon" size={20} color={colors.primary} /> : <SunIcon name="sunny" size={20} color="#FF9500" />,
-              title: '深色模式',
-              subtitle: darkMode ? '当前使用深色主题' : '当前使用浅色主题',
+              title: t('settings.darkMode'),
+              subtitle: darkMode ? t('settings.darkModeEnabled') : t('settings.darkModeDisabled'),
               children: (
                 <Switch
                   value={darkMode}
@@ -180,6 +182,25 @@ export default function SettingsScreen() {
                   trackColor={{ false: '#e9ecef', true: '#007AFF' }}
                   thumbColor={darkMode ? '#ffffff' : '#ffffff'}
                 />
+              ),
+            })}
+            
+            {renderSettingItem({
+              icon: <ShareIcon name="language" size={20} color={colors.primary} />,
+              title: '语言',
+              subtitle: currentLanguage === 'zh' ? '中文' : 'English',
+              children: (
+                <TouchableOpacity 
+                  style={[styles.actionButton, { backgroundColor: colors.primary + '20' }]} 
+                  onPress={() => {
+                    const newLanguage = currentLanguage === 'zh' ? 'en' : 'zh';
+                    switchLanguage(newLanguage);
+                  }}
+                >
+                  <Text style={[styles.actionButtonText, { color: colors.primary }]}>
+                    {currentLanguage === 'zh' ? 'English' : '中文'}
+                  </Text>
+                </TouchableOpacity>
               ),
             })}
           </>
@@ -190,49 +211,49 @@ export default function SettingsScreen() {
 
       {/* 其他设置 */}
       {renderSettingGroup({
-        title: '其他',
+        title: t('settings.other'),
         children: (
           <>
             {renderSettingItem({
               icon: <ShareIcon name="share" size={20} color={colors.primary} />,
-              title: '分享应用',
-              subtitle: '分享给朋友',
+              title: t('settings.shareApp'),
+              subtitle: t('settings.shareAppHint'),
               children: (
                 <TouchableOpacity style={[styles.actionButton, { backgroundColor: colors.primary + '20' }]} onPress={shareApp}>
-                  <Text style={[styles.actionButtonText, { color: colors.primary }]}>分享</Text>
+                  <Text style={[styles.actionButtonText, { color: colors.primary }]}>{t('common.share')}</Text>
                 </TouchableOpacity>
               ),
             })}
 
             {renderSettingItem({
               icon: <MailIcon name="mail" size={20} color={colors.primary} />,
-              title: '意见反馈',
-              subtitle: '发送邮件给我们',
+              title: t('settings.feedback'),
+              subtitle: t('settings.feedbackHint'),
               children: (
                 <TouchableOpacity style={[styles.actionButton, { backgroundColor: colors.primary + '20' }]} onPress={sendFeedback}>
-                  <Text style={[styles.actionButtonText, { color: colors.primary }]}>反馈</Text>
+                  <Text style={[styles.actionButtonText, { color: colors.primary }]}>{t('common.feedback')}</Text>
                 </TouchableOpacity>
               ),
             })}
 
             {renderSettingItem({
               icon: <GithubIcon name="logo-github" size={20} color={colors.primary} />,
-              title: '源代码',
-              subtitle: '查看 GitHub 项目',
+              title: t('settings.sourceCode'),
+              subtitle: t('settings.sourceCodeHint'),
               children: (
                 <TouchableOpacity style={[styles.actionButton, { backgroundColor: colors.primary + '20' }]} onPress={openGithub}>
-                  <Text style={[styles.actionButtonText, { color: colors.primary }]}>查看</Text>
+                  <Text style={[styles.actionButtonText, { color: colors.primary }]}>{t('common.view')}</Text>
                 </TouchableOpacity>
               ),
             })}
 
             {renderSettingItem({
               icon: <InfoIcon name="information-circle" size={20} color={colors.primary} />,
-              title: '关于',
-              subtitle: '版本 1.0.0',
+              title: t('settings.about'),
+              subtitle: t('settings.aboutHint'),
               children: (
                 <TouchableOpacity style={[styles.actionButton, { backgroundColor: colors.primary + '20' }]} onPress={showAbout}>
-                  <Text style={[styles.actionButtonText, { color: colors.primary }]}>关于</Text>
+                  <Text style={[styles.actionButtonText, { color: colors.primary }]}>{t('common.about')}</Text>
                 </TouchableOpacity>
               ),
             })}

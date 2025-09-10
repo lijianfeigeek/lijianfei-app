@@ -16,6 +16,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColorScheme } from 'react-native';
 import { Ionicons as HeartIcon, Ionicons as TrashIcon, Ionicons as ShareIcon } from '@expo/vector-icons';
 import { useFavorites } from '../../hooks/useFavorites';
+import { useTranslation } from '../../hooks/useTranslation';
+import { useLocalizedText } from '../../utils/localization';
 import { Case } from '../../types';
 import { Colors } from '../../constants/Colors';
 
@@ -28,6 +30,8 @@ export default function FavoritesScreen() {
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const { t, currentLanguage } = useTranslation();
+  const { getText, getTags } = useLocalizedText();
   
   const { 
     favoriteCases, 
@@ -42,43 +46,43 @@ export default function FavoritesScreen() {
   const shareCase = useCallback((caseItem: Case) => {
     // TODO: 实现分享功能
     Alert.alert(
-      '分享案例',
-      `分享 "${caseItem.title}" 到社交媒体`,
+      t('case.share'),
+      `${t('case.share')} "${getText(caseItem.title)}" ${t('alerts.shareToSocial')}`,
       [
-        { text: '取消', style: 'cancel' },
-        { text: '分享', onPress: () => {
+        { text: t('common.cancel'), style: 'cancel' },
+        { text: t('common.share'), onPress: () => {
           // 这里将实现实际的分享功能
-          console.log('分享案例:', caseItem.title);
+          console.log('分享案例:', getText(caseItem.title));
         }}
       ]
     );
-  }, []);
+  }, [t, currentLanguage]);
 
   /**
    * 取消所有收藏
    */
   const handleClearAllFavorites = useCallback(() => {
     Alert.alert(
-      '清除所有收藏',
-      '确定要清除所有收藏的案例吗？此操作不可恢复。',
+      t('common.clear') + t('tabs.favorites'),
+      t('alerts.clearFavoritesConfirm'),
       [
-        { text: '取消', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         { 
-          text: '确定', 
+          text: t('common.confirm'), 
           style: 'destructive',
           onPress: async () => {
             try {
               await clearAllFavorites();
-              Alert.alert('成功', '已清除所有收藏');
+              Alert.alert(t('alerts.success'), t('alerts.allFavoritesCleared'));
             } catch (error) {
               console.error('清除收藏失败:', error);
-              Alert.alert('错误', '无法清除收藏数据');
+              Alert.alert(t('alerts.error'), t('alerts.clearFavoritesFailed'));
             }
           }
         }
       ]
     );
-  }, [clearAllFavorites]);
+  }, [clearAllFavorites, t, currentLanguage]);
 
   // 渲染收藏案例项
   const renderFavoriteItem = ({ item }: { item: Case }) => (
@@ -86,17 +90,17 @@ export default function FavoritesScreen() {
       {/* 案例信息 */}
       <View style={styles.favoriteContent}>
         <Text style={[styles.favoriteTitle, { color: colors.text }]} numberOfLines={2}>
-          {item.title}
+          {getText(item.title)}
         </Text>
         <Text style={[styles.favoriteDescription, { color: colors.tabIconDefault }]} numberOfLines={3}>
-          {item.description}
+          {getText(item.description)}
         </Text>
         <View style={styles.favoriteMeta}>
           <Text style={[styles.favoriteAuthor, { color: colors.tabIconDefault, backgroundColor: colors.border + '20' }]}>👤 {item.author}</Text>
-          <Text style={[styles.favoriteCategory, { color: colors.primary, backgroundColor: colors.primary + '20' }]}>📁 {item.category}</Text>
+          <Text style={[styles.favoriteCategory, { color: colors.primary, backgroundColor: colors.primary + '20' }]}>📁 {getText(item.category)}</Text>
         </View>
         <View style={styles.favoriteTags}>
-          {item.tags.slice(0, 3).map((tag, index) => (
+          {getTags(item.tags).slice(0, 3).map((tag, index) => (
             <Text key={index} style={[styles.favoriteTag, { color: colors.tabIconDefault, backgroundColor: colors.border + '20' }]}>#{tag}</Text>
           ))}
         </View>
@@ -124,9 +128,9 @@ export default function FavoritesScreen() {
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
       <Text style={styles.emptyIcon}>🤍</Text>
-      <Text style={[styles.emptyTitle, { color: colors.text }]}>暂无收藏</Text>
+      <Text style={[styles.emptyTitle, { color: colors.text }]}>{t('favorites.empty')}</Text>
       <Text style={[styles.emptyDescription, { color: colors.tabIconDefault }]}>
-        快去浏览案例，点击爱心图标收藏你喜欢的作品吧！
+        {t('favorites.emptyHint')}
       </Text>
     </View>
   );
@@ -134,9 +138,9 @@ export default function FavoritesScreen() {
   // 渲染头部
   const renderHeader = () => (
     <View style={[styles.header, { backgroundColor: colors.card }]}>
-      <Text style={[styles.headerTitle, { color: colors.text }]}>我的收藏</Text>
+      <Text style={[styles.headerTitle, { color: colors.text }]}>{t('favorites.title')}</Text>
       <Text style={[styles.headerSubtitle, { color: colors.tabIconDefault }]}>
-        共 {favoriteCases.length} 个收藏案例
+        {favoriteCases.length} {t('case.favorite')}
       </Text>
       {favoriteCases.length > 0 && (
         <TouchableOpacity 
@@ -144,7 +148,7 @@ export default function FavoritesScreen() {
           onPress={handleClearAllFavorites}
         >
           <TrashIcon name="trash" size={16} color="#f44336" />
-          <Text style={[styles.clearButtonText, { color: '#f44336' }]}>清除所有</Text>
+          <Text style={[styles.clearButtonText, { color: '#f44336' }]}>{t('common.clear')}{t('tabs.favorites')}</Text>
         </TouchableOpacity>
       )}
     </View>
@@ -154,7 +158,7 @@ export default function FavoritesScreen() {
     return (
       <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
         <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={[styles.loadingText, { color: colors.text }]}>加载收藏中...</Text>
+        <Text style={[styles.loadingText, { color: colors.text }]}>{t('favorites.loading')}</Text>
       </View>
     );
   }

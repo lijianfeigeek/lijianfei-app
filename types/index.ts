@@ -8,19 +8,27 @@
 export type ImageResource = number | any;
 
 /**
+ * 多语言文本接口
+ */
+export interface LocalizedText {
+  zh: string;  // 中文
+  en: string;  // 英文
+}
+
+/**
  * 案例数据接口
  * 定义了Nano Banana AI生成案例的完整数据结构
  */
 export interface Case {
   id: number;                    // 案例唯一标识符 - 用于列表渲染和路由参数
-  title: string;                 // 案例标题 - 在列表和详情页显示
-  description: string;           // 案例描述 - 详细说明案例内容
-  prompt: string;                // AI生成提示词 - 展示如何生成该图片
+  title: LocalizedText;          // 案例标题 - 在列表和详情页显示
+  description: LocalizedText;    // 案例描述 - 详细说明案例内容
+  prompt: LocalizedText;         // AI生成提示词 - 展示如何生成该图片
   inputImages: ImageResource[];  // 输入图片资源数组 - 原始参考图片
   outputImages: ImageResource[]; // 输出图片资源数组 - AI生成结果图片
   author: string;                // 案例作者 - 来源Twitter或其他平台
-  category: string;              // 案例分类 - 用于筛选功能
-  tags: string[];               // 标签数组 - 用于搜索和分类
+  category: LocalizedText;       // 案例分类 - 用于筛选功能
+  tags: LocalizedText[];         // 标签数组 - 用于搜索和分类
   isFavorite: boolean;          // 是否收藏 - 用户交互功能
   createdAt: string;           // 创建时间 - 用于排序和显示
 }

@@ -8,6 +8,7 @@ import { useRouter } from 'expo-router';
 import { CaseList } from '../../components/CaseList';
 import { generateMockCases } from '../../data/mockData';
 import { useFavorites } from '../../hooks/useFavorites';
+import { useTranslation } from '../../hooks/useTranslation';
 import { Case } from '../../types';
 import { Colors } from '../../constants/Colors';
 
@@ -21,6 +22,7 @@ export default function CasesScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const { t } = useTranslation();
   
   // 状态管理 - 教学重点：React Hooks使用
   const [cases, setCases] = useState<Case[]>([]);
@@ -62,11 +64,11 @@ export default function CasesScreen() {
       
       // 显示错误提示
       Alert.alert(
-        '加载失败',
-        '无法加载案例数据，请检查网络连接后重试。',
+        t('home.loadingError'),
+        t('home.loadingErrorMessage'),
         [
-          { text: '取消', style: 'cancel' },
-          { text: '重试', onPress: loadCases }
+          { text: t('common.cancel'), style: 'cancel' },
+          { text: t('common.retry'), onPress: loadCases }
         ]
       );
     } finally {
@@ -111,7 +113,7 @@ export default function CasesScreen() {
     return (
       <View style={[styles.errorContainer, { backgroundColor: colors.background }]}>
         <Text style={styles.errorIcon}>⚠️</Text>
-        <Text style={[styles.errorTitle, { color: colors.text }]}>加载失败</Text>
+        <Text style={[styles.errorTitle, { color: colors.text }]}>{t('home.loadingError')}</Text>
         <Text style={[styles.errorMessage, { color: colors.tabIconDefault }]}>{error}</Text>
       </View>
     );
@@ -135,8 +137,8 @@ export default function CasesScreen() {
           borderBottomColor: colors.border,
         }
       ]}>
-        <Text style={[styles.title, { color: colors.text }]}>🤖 Nano Banana AI</Text>
-        <Text style={[styles.subtitle, { color: colors.tabIconDefault }]}>探索AI创意生成的无限可能</Text>
+        <Text style={[styles.title, { color: colors.text }]}>{t('app.title')}</Text>
+        <Text style={[styles.subtitle, { color: colors.tabIconDefault }]}>{t('app.subtitle')}</Text>
       </View>
 
       {/* 案例列表组件 */}

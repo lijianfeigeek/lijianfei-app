@@ -21,6 +21,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { generateMockCases } from '../../../data/mockData';
 import { useFavorites } from '../../../hooks/useFavorites';
+import { useTranslation } from '../../../hooks/useTranslation';
+import { useLocalizedText } from '../../../utils/localization';
 import { Case } from '../../../types';
 import { Colors } from '../../../constants/Colors';
 
@@ -35,6 +37,8 @@ export default function CaseDetailScreen() {
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const { t, currentLanguage } = useTranslation();
+  const { getText, getTags } = useLocalizedText();
   
   // 状态管理
   const [caseItem, setCaseItem] = useState<Case | null>(null);
@@ -64,15 +68,19 @@ export default function CaseDetailScreen() {
         if (foundCase) {
           setCaseItem(foundCase);
         } else {
-          Alert.alert('错误', '找不到该案例', [
-            { text: '返回', onPress: () => router.back() }
-          ]);
+          Alert.alert(
+            t('alerts.error'), 
+            t('alerts.caseNotFound'), 
+            [{ text: t('alerts.back'), onPress: () => router.back() }]
+          );
         }
       } catch (error) {
         console.error('加载案例详情失败:', error);
-        Alert.alert('错误', '加载案例详情失败', [
-          { text: '返回', onPress: () => router.back() }
-        ]);
+        Alert.alert(
+          t('alerts.error'), 
+          t('alerts.caseLoadFailed'), 
+          [{ text: t('alerts.back'), onPress: () => router.back() }]
+        );
       } finally {
         setLoading(false);
       }
@@ -121,13 +129,16 @@ export default function CaseDetailScreen() {
       // 显示操作反馈
       const isNowFavorite = !isFavorite(caseItem.id);
       Alert.alert(
-        isNowFavorite ? '已添加到收藏' : '已取消收藏',
-        `"${caseItem.title}"${isNowFavorite ? '已添加到收藏列表' : '已从收藏列表移除'}`,
-        [{ text: '确定' }]
+        isNowFavorite ? t('case.favorite') : t('case.unfavorite'),
+        `"${getText(caseItem.title)}"${isNowFavorite ? t('alerts.addedToFavorites') : t('alerts.removedFromFavorites')}`,
+        [{ text: t('common.confirm') }]
       );
     } catch (error) {
       console.error('切换收藏状态失败:', error);
-      Alert.alert('错误', '无法更新收藏状态');
+      Alert.alert(
+        t('alerts.error'), 
+        t('alerts.updateFavoriteFailed')
+      );
     }
     
     setTimeout(() => {
@@ -143,11 +154,19 @@ export default function CaseDetailScreen() {
     
     try {
       // 使用标准的Clipboard API
-      await Clipboard.setString(caseItem.prompt);
-      Alert.alert('复制成功', '提示词已复制到剪贴板', [{ text: '确定' }]);
+      await Clipboard.setString(getText(caseItem.prompt));
+      Alert.alert(
+        t('alerts.copySuccess'), 
+        t('alerts.promptCopied'), 
+        [{ text: t('common.confirm') }]
+      );
     } catch (error) {
       console.error('复制提示词失败:', error);
-      Alert.alert('复制失败', '无法复制提示词到剪贴板', [{ text: '确定' }]);
+      Alert.alert(
+        t('alerts.copyFailed'), 
+        t('alerts.copyPromptFailed'), 
+        [{ text: t('common.confirm') }]
+      );
     }
   }, [caseItem]);
 
@@ -156,7 +175,7 @@ export default function CaseDetailScreen() {
     return (
       <View style={[styles.container, { paddingTop: insets.top, backgroundColor: colors.background }]}>
         <View style={styles.loadingContainer}>
-          <Text style={[styles.loadingText, { color: colors.text }]}>加载中...</Text>
+          <Text style={[styles.loadingText, { color: colors.text }]}>{t('common.loading')}</Text>
         </View>
       </View>
     );
@@ -167,14 +186,44 @@ export default function CaseDetailScreen() {
     return (
       <View style={[styles.container, { paddingTop: insets.top, backgroundColor: colors.background }]}>
         <View style={styles.errorContainer}>
-          <Text style={[styles.errorText, { color: colors.text }]}>案例不存在</Text>
+          <Text style={[styles.errorText, { color: colors.text }]}>{t('alerts.caseNotFound')}</Text>
         </View>
       </View>
     );
   }
 
   // 获取所有图片（输入图片 + 输出图片）
-  const allImages = [...caseItem.inputImages, ...caseItem.outputImages];
+  const allImages = [...(caseItem.inputImages || []), ...(caseItem.outputImages || [])];
+  
+  // 如果没有图片，显示占位符
+  if (allImages.length === 0) {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top, backgroundColor: colors.background }]}>
+        <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
+          <TouchableOpacity 
+            style={[styles.backButton, { backgroundColor: colors.border + '20' }]}
+            onPress={() => router.back()}
+          >
+            <Ionicons name="chevron-back" size={24} color={colors.text} />
+          </TouchableOpacity>
+          <Text style={[styles.headerTitle, { color: colors.text }]} numberOfLines={1}>
+            {caseItem ? getText(caseItem.title) : t('common.loading')}
+          </Text>
+          <View style={styles.headerActions}>
+            <TouchableOpacity style={styles.headerAction} onPress={() => router.back()}>
+              <Ionicons name="close" size={24} color={colors.text} />
+            </TouchableOpacity>
+          </View>
+        </View>
+        
+        <View style={styles.noImagesContainer}>
+          <Text style={[styles.noImagesText, { color: colors.text }]}>
+            {t('case.noImagesAvailable')}
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.container, { paddingTop: insets.top, backgroundColor: colors.background }]}>
@@ -188,7 +237,7 @@ export default function CaseDetailScreen() {
         </TouchableOpacity>
         
         <Text style={[styles.headerTitle, { color: colors.text }]} numberOfLines={1}>
-          {caseItem.title}
+          {getText(caseItem.title)}
         </Text>
         
         <View style={styles.headerActions}>
@@ -257,14 +306,14 @@ export default function CaseDetailScreen() {
                 {/* 图片加载指示器 */}
                 {imageLoading && (
                   <View style={styles.imageLoadingOverlay}>
-                    <Text style={[styles.loadingText, { color: colors.text }]}>加载中...</Text>
+                    <Text style={[styles.loadingText, { color: colors.text }]}>{t('common.loading')}</Text>
                   </View>
                 )}
                 
                 {/* 图片类型标签 */}
                 <View style={styles.imageTypeLabel}>
                   <Text style={styles.imageTypeText}>
-                    {index < caseItem.inputImages.length ? '输入图片' : '输出图片'}
+                    {index < caseItem.inputImages.length ? t('case.inputImages') : t('case.outputImages')}
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -289,41 +338,41 @@ export default function CaseDetailScreen() {
         <View style={styles.infoSection}>
           {/* 标题和分类 */}
           <View style={styles.titleSection}>
-            <Text style={[styles.title, { color: colors.text }]}>{caseItem.title}</Text>
+            <Text style={[styles.title, { color: colors.text }]}>{getText(caseItem.title)}</Text>
             <View style={styles.metaRow}>
               <Text style={[styles.author, { color: colors.tabIconDefault, backgroundColor: colors.border + '20' }]}>👤 {caseItem.author}</Text>
-              <Text style={[styles.category, { color: colors.primary, backgroundColor: colors.primary + '20' }]}>📁 {caseItem.category}</Text>
+              <Text style={[styles.category, { color: colors.primary, backgroundColor: colors.primary + '20' }]}>📁 {getText(caseItem.category)}</Text>
             </View>
           </View>
 
           {/* 描述 */}
           <View style={styles.descriptionSection}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>案例描述</Text>
-            <Text style={[styles.description, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]}>{caseItem.description}</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('alerts.caseDescription')}</Text>
+            <Text style={[styles.description, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]}>{getText(caseItem.description)}</Text>
           </View>
 
           {/* AI提示词 */}
           <View style={styles.promptSection}>
             <View style={styles.promptHeader}>
-              <Text style={[styles.sectionTitle, { color: colors.text }]}>AI提示词</Text>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('case.prompt')}</Text>
               <TouchableOpacity 
                 style={[styles.copyButton, { backgroundColor: colors.border + '20' }]}
                 onPress={handleCopyPrompt}
               >
                 <Ionicons name="copy-outline" size={18} color={colors.text} />
-                <Text style={[styles.copyButtonText, { color: colors.text }]}>复制</Text>
+                <Text style={[styles.copyButtonText, { color: colors.text }]}>{t('alerts.copy')}</Text>
               </TouchableOpacity>
             </View>
             <View style={[styles.promptContainer, { backgroundColor: colors.border + '20', borderColor: colors.border }]}>
-              <Text style={[styles.prompt, { color: colors.text }]}>{caseItem.prompt}</Text>
+              <Text style={[styles.prompt, { color: colors.text }]}>{getText(caseItem.prompt)}</Text>
             </View>
           </View>
 
           {/* 标签 */}
           <View style={styles.tagsSection}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>相关标签</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('search.tags')}</Text>
             <View style={styles.tagsContainer}>
-              {caseItem.tags.map((tag, index) => (
+              {getTags(caseItem.tags).map((tag, index) => (
                 <View key={index} style={[styles.tag, { backgroundColor: colors.border + '20', borderColor: colors.border }]}>
                   <Text style={[styles.tagText, { color: colors.tabIconDefault }]}>#{tag}</Text>
                 </View>
@@ -334,7 +383,7 @@ export default function CaseDetailScreen() {
           {/* 创建时间 */}
           <View style={[styles.timeSection, { borderTopColor: colors.border }]}>
             <Text style={[styles.timeText, { color: colors.tabIconDefault }]}>
-              创建时间: {new Date(caseItem.createdAt).toLocaleString('zh-CN')}
+              {t('alerts.createdAt')}{new Date(caseItem.createdAt).toLocaleString(currentLanguage === 'zh' ? 'zh-CN' : 'en-US')}
             </Text>
           </View>
         </View>
@@ -491,6 +540,19 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 16,
     // color: '#666', // 动态设置
+  },
+  
+  noImagesContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 60,
+  },
+  
+  noImagesText: {
+    fontSize: 18,
+    fontWeight: '600',
+    textAlign: 'center',
   },
 
   // 顶部导航栏

@@ -19,6 +19,8 @@ import { generateMockCases, getCategories, getAllTags } from '../../data/mockDat
 import { Case } from '../../types';
 import { useRouter } from 'expo-router';
 import { Colors } from '../../constants/Colors';
+import { useTranslation } from '../../hooks/useTranslation';
+import { useLocalizedText } from '../../utils/localization';
 
 /**
  * 搜索页面
@@ -30,6 +32,8 @@ export default function SearchScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const { t } = useTranslation();
+  const { getText, getTags } = useLocalizedText();
   
   // 状态管理 - 教学重点：复杂状态管理
   const [searchQuery, setSearchQuery] = useState('');
@@ -85,25 +89,25 @@ export default function SearchScreen() {
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
       filtered = filtered.filter(caseItem => 
-        caseItem.title.toLowerCase().includes(query) ||
-        caseItem.description.toLowerCase().includes(query) ||
-        caseItem.prompt.toLowerCase().includes(query) ||
+        getText(caseItem.title).toLowerCase().includes(query) ||
+        getText(caseItem.description).toLowerCase().includes(query) ||
+        getText(caseItem.prompt).toLowerCase().includes(query) ||
         caseItem.author.toLowerCase().includes(query) ||
-        caseItem.tags.some(tag => tag.toLowerCase().includes(query))
+        getTags(caseItem.tags).some(tag => tag.toLowerCase().includes(query))
       );
     }
 
     // 按分类过滤
     if (selectedCategory) {
       filtered = filtered.filter(caseItem => 
-        caseItem.category === selectedCategory
+        getText(caseItem.category) === selectedCategory
       );
     }
 
     // 按标签过滤
     if (selectedTags.length > 0) {
       filtered = filtered.filter(caseItem => 
-        selectedTags.every(tag => caseItem.tags.includes(tag))
+        selectedTags.every(tag => getTags(caseItem.tags).includes(tag))
       );
     }
 
@@ -187,7 +191,7 @@ export default function SearchScreen() {
         <SearchIcon name="search" size={20} color={colors.tabIconDefault} style={styles.searchIcon} />
         <TextInput
           style={[styles.searchInput, { color: colors.text }]}
-          placeholder="搜索案例、作者或标签..."
+          placeholder={t('search.placeholder')}
           value={searchQuery}
           onChangeText={handleSearchChange}
           placeholderTextColor={colors.tabIconDefault}
@@ -215,7 +219,7 @@ export default function SearchScreen() {
         onPress={() => setShowFilters(!showFilters)}
       >
         <FilterIcon name="filter" size={20} color={colors.primary} />
-        <Text style={[styles.filterButtonText, { color: colors.primary }]}>筛选</Text>
+        <Text style={[styles.filterButtonText, { color: colors.primary }]}>{t('common.filter')}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -234,7 +238,7 @@ export default function SearchScreen() {
       ]}>
         {/* 分类筛选 */}
         <View style={styles.filterSection}>
-          <Text style={[styles.filterTitle, { color: colors.text }]}>分类</Text>
+          <Text style={[styles.filterTitle, { color: colors.text }]}>{t('search.categories')}</Text>
           <View style={styles.categoriesContainer}>
             {categories.map(category => (
               <TouchableOpacity
@@ -265,7 +269,7 @@ export default function SearchScreen() {
 
         {/* 标签筛选 */}
         <View style={styles.filterSection}>
-          <Text style={[styles.filterTitle, { color: colors.text }]}>标签</Text>
+          <Text style={[styles.filterTitle, { color: colors.text }]}>{t('search.tags')}</Text>
           <View style={styles.tagsContainer}>
             {allTags.slice(0, 12).map(tag => (
               <TouchableOpacity
@@ -300,7 +304,7 @@ export default function SearchScreen() {
             style={styles.clearFiltersButton}
             onPress={clearFilters}
           >
-            <Text style={styles.clearFiltersText}>清除所有筛选</Text>
+            <Text style={styles.clearFiltersText}>{t('search.clearFilters')}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -323,12 +327,12 @@ export default function SearchScreen() {
         }
       ]}>
         <Text style={[styles.searchStatsText, { color: colors.tabIconDefault }]}>
-          找到 {filteredCases.length} 个相关案例
+          {t('search.resultsFound', { count: filteredCases.length })}
           {(searchQuery || selectedCategory || selectedTags.length > 0) && (
             <Text style={[styles.searchStatsQuery, { color: colors.primary }]}>
               {searchQuery && ` "${searchQuery}"`}
-              {selectedCategory && ` 分类: ${selectedCategory}`}
-              {selectedTags.length > 0 && ` 标签: ${selectedTags.join(', ')}`}
+              {selectedCategory && ` ${t('search.categories')}: ${selectedCategory}`}
+              {selectedTags.length > 0 && ` ${t('search.tags')}: ${selectedTags.join(', ')}`}
             </Text>
           )}
         </Text>
@@ -340,7 +344,7 @@ export default function SearchScreen() {
     return (
       <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
         <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={[styles.loadingText, { color: colors.text }]}>加载中...</Text>
+        <Text style={[styles.loadingText, { color: colors.text }]}>{t('common.loading')}</Text>
       </View>
     );
   }
@@ -375,13 +379,13 @@ export default function SearchScreen() {
           >
             <View style={styles.resultContent}>
               <View style={styles.resultText}>
-                <Text style={[styles.resultTitle, { color: colors.text }]}>{item.title}</Text>
+                <Text style={[styles.resultTitle, { color: colors.text }]}>{getText(item.title)}</Text>
                 <Text style={[styles.resultDescription, { color: colors.tabIconDefault }]} numberOfLines={2}>
-                  {item.description}
+                  {getText(item.description)}
                 </Text>
                 <View style={styles.resultMeta}>
                   <Text style={[styles.resultAuthor, { color: colors.tabIconDefault }]}>{item.author}</Text>
-                  <Text style={[styles.resultCategory, { color: colors.primary }]}>{item.category}</Text>
+                  <Text style={[styles.resultCategory, { color: colors.primary }]}>{getText(item.category)}</Text>
                 </View>
               </View>
               <ChevronIcon name="chevron-forward" size={20} color={colors.tabIconDefault} style={styles.chevronIcon} />
@@ -393,14 +397,14 @@ export default function SearchScreen() {
             <Text style={styles.emptyIcon}>🔍</Text>
             <Text style={[styles.emptyTitle, { color: colors.text }]}>
               {!searchQuery.trim() && !selectedCategory && selectedTags.length === 0 
-                ? '输入关键词开始搜索' 
-                : '未找到相关案例'
+                ? t('search.startSearch') 
+                : t('search.noResults')
               }
             </Text>
             <Text style={[styles.emptyDescription, { color: colors.tabIconDefault }]}>
               {!searchQuery.trim() && !selectedCategory && selectedTags.length === 0 
-                ? '搜索案例、作者或标签来找到相关内容'
-                : '尝试调整搜索关键词或筛选条件'
+                ? t('search.searchHint')
+                : t('search.tryAdjustSearch')
               }
             </Text>
           </View>
