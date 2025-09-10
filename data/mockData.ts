@@ -1,7 +1,7 @@
 // data/mockData.ts - 模拟数据生成
 // 教学要点：数据结构设计，模拟真实数据，TypeScript类型使用，资源管理
 
-import { Case } from '../types';
+import { Case, LocalizedText } from '../types';
 import { getCaseImageResources, placeholderImage } from './imageMap';
 
 /**
@@ -685,17 +685,25 @@ export const generateMockCases = (): Case[] => {
 /**
  * 获取所有可用的分类
  */
-export const getCategories = (cases: Case[], currentLanguage: string = 'zh'): string[] => {
-  const categories = cases.map(caseItem => caseItem.category[currentLanguage as keyof typeof caseItem.category] || caseItem.category.zh);
-  return [...new Set(categories)]; // 去重
+export const getCategories = (cases: Case[]): LocalizedText[] => {
+  const categories = cases.map(caseItem => caseItem.category);
+  // 去重 - 基于 zh 字段
+  const uniqueCategories = categories.filter((category, index, self) => 
+    index === self.findIndex(c => c.zh === category.zh)
+  );
+  return uniqueCategories;
 };
 
 /**
  * 获取所有可用的标签
  */
-export const getAllTags = (cases: Case[], currentLanguage: string = 'zh'): string[] => {
-  const allTags = cases.flatMap(caseItem => caseItem.tags.map(tag => tag[currentLanguage as keyof typeof tag] || tag.zh));
-  return [...new Set(allTags)]; // 去重
+export const getAllTags = (cases: Case[]): LocalizedText[] => {
+  const allTags = cases.flatMap(caseItem => caseItem.tags);
+  // 去重 - 基于 zh 字段
+  const uniqueTags = allTags.filter((tag, index, self) => 
+    index === self.findIndex(t => t.zh === tag.zh)
+  );
+  return uniqueTags;
 };
 
 /**

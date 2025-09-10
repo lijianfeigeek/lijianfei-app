@@ -13,8 +13,8 @@ export const useTranslation = () => {
     await changeLanguage(language);
   };
 
-  // 获取当前语言
-  const currentLanguage = getCurrentLanguage();
+  // 获取当前语言 - 使用 i18n.language 以避免重新渲染问题
+  const currentLanguage = i18n.language || getCurrentLanguage();
 
   // 获取可用语言列表
   const availableLanguages = getAvailableLanguages();

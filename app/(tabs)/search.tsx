@@ -16,7 +16,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons as SearchIcon, Ionicons as XIcon, Ionicons as FilterIcon, Ionicons as ChevronIcon } from '@expo/vector-icons';
 import { generateMockCases, getCategories, getAllTags } from '../../data/mockData';
-import { Case } from '../../types';
+import { Case, LocalizedText } from '../../types';
 import { useRouter } from 'expo-router';
 import { Colors } from '../../constants/Colors';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -37,14 +37,14 @@ export default function SearchScreen() {
   
   // 状态管理 - 教学重点：复杂状态管理
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<LocalizedText | null>(null);
+  const [selectedTags, setSelectedTags] = useState<LocalizedText[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const [cases, setCases] = useState<Case[]>([]);
   const [filteredCases, setFilteredCases] = useState<Case[]>([]);
   const [loading, setLoading] = useState(true);
-  const [categories, setCategories] = useState<string[]>([]);
-  const [allTags, setAllTags] = useState<string[]>([]);
+  const [categories, setCategories] = useState<LocalizedText[]>([]);
+  const [allTags, setAllTags] = useState<LocalizedText[]>([]);
 
   /**
    * 加载初始数据
@@ -100,19 +100,21 @@ export default function SearchScreen() {
     // 按分类过滤
     if (selectedCategory) {
       filtered = filtered.filter(caseItem => 
-        getText(caseItem.category) === selectedCategory
+        caseItem.category.zh === selectedCategory.zh
       );
     }
 
     // 按标签过滤
     if (selectedTags.length > 0) {
       filtered = filtered.filter(caseItem => 
-        selectedTags.every(tag => getTags(caseItem.tags).includes(tag))
+        selectedTags.every(selectedTag => 
+          caseItem.tags.some(caseTag => caseTag.zh === selectedTag.zh)
+        )
       );
     }
 
     setFilteredCases(filtered);
-  }, [cases, searchQuery, selectedCategory, selectedTags]);
+  }, [cases, searchQuery, selectedCategory, selectedTags, getText, getTags]);
 
   /**
    * 处理搜索输入变化
@@ -125,17 +127,17 @@ export default function SearchScreen() {
   /**
    * 选择分类
    */
-  const handleCategorySelect = useCallback((category: string) => {
-    setSelectedCategory(prev => prev === category ? '' : category);
+  const handleCategorySelect = useCallback((category: LocalizedText) => {
+    setSelectedCategory(prev => prev && prev.zh === category.zh ? null : category);
   }, []);
 
   /**
    * 切换标签选择
    */
-  const handleTagToggle = useCallback((tag: string) => {
+  const handleTagToggle = useCallback((tag: LocalizedText) => {
     setSelectedTags(prev => 
-      prev.includes(tag) 
-        ? prev.filter(t => t !== tag)
+      prev.some(t => t.zh === tag.zh) 
+        ? prev.filter(t => t.zh !== tag.zh)
         : [...prev, tag]
     );
   }, []);
@@ -145,7 +147,7 @@ export default function SearchScreen() {
    */
   const clearFilters = useCallback(() => {
     setSearchQuery('');
-    setSelectedCategory('');
+    setSelectedCategory(null);
     setSelectedTags([]);
   }, []);
 
@@ -242,12 +244,12 @@ export default function SearchScreen() {
           <View style={styles.categoriesContainer}>
             {categories.map(category => (
               <TouchableOpacity
-                key={category}
+                key={category.zh}
                 style={[
                   styles.categoryChip,
-                  selectedCategory === category && styles.categoryChipSelected,
+                  selectedCategory && selectedCategory.zh === category.zh && styles.categoryChipSelected,
                   {
-                    backgroundColor: selectedCategory === category ? colors.primary : colors.border + '20',
+                    backgroundColor: selectedCategory && selectedCategory.zh === category.zh ? colors.primary : colors.border + '20',
                     borderColor: colors.border,
                   }
                 ]}
@@ -255,12 +257,12 @@ export default function SearchScreen() {
               >
                 <Text style={[
                   styles.categoryChipText,
-                  selectedCategory === category && styles.categoryChipTextSelected,
+                  selectedCategory && selectedCategory.zh === category.zh && styles.categoryChipTextSelected,
                   {
-                    color: selectedCategory === category ? '#ffffff' : colors.text,
+                    color: selectedCategory && selectedCategory.zh === category.zh ? '#ffffff' : colors.text,
                   }
                 ]}>
-                  {category}
+                  {getText(category)}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -273,12 +275,12 @@ export default function SearchScreen() {
           <View style={styles.tagsContainer}>
             {allTags.slice(0, 12).map(tag => (
               <TouchableOpacity
-                key={tag}
+                key={tag.zh}
                 style={[
                   styles.tagChip,
-                  selectedTags.includes(tag) && styles.tagChipSelected,
+                  selectedTags.some(t => t.zh === tag.zh) && styles.tagChipSelected,
                   {
-                    backgroundColor: selectedTags.includes(tag) ? colors.primary : colors.border + '20',
+                    backgroundColor: selectedTags.some(t => t.zh === tag.zh) ? colors.primary : colors.border + '20',
                     borderColor: colors.border,
                   }
                 ]}
@@ -286,12 +288,12 @@ export default function SearchScreen() {
               >
                 <Text style={[
                   styles.tagChipText,
-                  selectedTags.includes(tag) && styles.tagChipTextSelected,
+                  selectedTags.some(t => t.zh === tag.zh) && styles.tagChipTextSelected,
                   {
-                    color: selectedTags.includes(tag) ? '#ffffff' : colors.text,
+                    color: selectedTags.some(t => t.zh === tag.zh) ? '#ffffff' : colors.text,
                   }
                 ]}>
-                  #{tag}
+                  #{getText(tag)}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -331,8 +333,8 @@ export default function SearchScreen() {
           {(searchQuery || selectedCategory || selectedTags.length > 0) && (
             <Text style={[styles.searchStatsQuery, { color: colors.primary }]}>
               {searchQuery && ` "${searchQuery}"`}
-              {selectedCategory && ` ${t('search.categories')}: ${selectedCategory}`}
-              {selectedTags.length > 0 && ` ${t('search.tags')}: ${selectedTags.join(', ')}`}
+              {selectedCategory && ` ${t('search.categories')}: ${getText(selectedCategory)}`}
+              {selectedTags.length > 0 && ` ${t('search.tags')}: ${selectedTags.map(tag => getText(tag)).join(', ')}`}
             </Text>
           )}
         </Text>

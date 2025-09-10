@@ -3,6 +3,7 @@
 
 import { LocalizedText } from '../types';
 import { useTranslation } from '../hooks/useTranslation';
+import { useCallback } from 'react';
 
 /**
  * 获取本地化文本的工具函数
@@ -31,13 +32,14 @@ export const getLocalizedTags = (localizedTags: LocalizedText[], currentLanguage
 export const useLocalizedText = () => {
   const { currentLanguage } = useTranslation();
   
-  const getText = (localizedText: LocalizedText): string => {
+  // Memoize functions to prevent infinite re-renders
+  const getText = useCallback((localizedText: LocalizedText): string => {
     return getLocalizedText(localizedText, currentLanguage);
-  };
+  }, [currentLanguage]);
   
-  const getTags = (localizedTags: LocalizedText[]): string[] => {
+  const getTags = useCallback((localizedTags: LocalizedText[]): string[] => {
     return getLocalizedTags(localizedTags, currentLanguage);
-  };
+  }, [currentLanguage]);
   
   return { getText, getTags, currentLanguage };
 };
