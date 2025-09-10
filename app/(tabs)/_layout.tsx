@@ -45,7 +45,6 @@ export default function CasesLayout() {
           styles.header,
           {
             // 为iPhone适配顶部安全区域
-            paddingTop: insets.top,
             height: Platform.OS === 'ios' ? 44 + insets.top : 56,
             backgroundColor: colors.card,
             borderBottomColor: colors.border,

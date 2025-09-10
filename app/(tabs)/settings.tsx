@@ -11,7 +11,6 @@ import {
   Alert,
   Linking,
   ScrollView,
-  Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColorScheme, Appearance } from 'react-native';
@@ -20,8 +19,7 @@ import {
   Ionicons as SunIcon, 
   Ionicons as InfoIcon,
   Ionicons as MailIcon,
-  Ionicons as GithubIcon,
-  Ionicons as ShareIcon 
+  Ionicons,
 } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -35,7 +33,7 @@ export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
-  const { t, switchLanguage, currentLanguage, availableLanguages } = useTranslation();
+  const { t, switchLanguage, currentLanguage } = useTranslation();
   
   // 状态管理 - 教学重点：设置项的状态管理
   const [darkMode, setDarkMode] = useState(colorScheme === 'dark');
@@ -70,22 +68,6 @@ export default function SettingsScreen() {
 
 
 
-  /**
-   * 分享应用
-   */
-  const shareApp = () => {
-    // TODO: 实现应用分享功能
-    Alert.alert(
-      t('settings.shareApp'),
-      t('settings.shareAppAlert'),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        { text: t('common.share'), onPress: () => {
-          console.log('分享应用');
-        }}
-      ]
-    );
-  };
 
   /**
    * 发送反馈邮件
@@ -94,12 +76,6 @@ export default function SettingsScreen() {
     Linking.openURL('mailto:support@nanobanana.com?subject=Nano Banana AI 反馈');
   };
 
-  /**
-   * 打开GitHub页面
-   */
-  const openGithub = () => {
-    Linking.openURL('https://github.com/yourusername/nano-banana-rn-app');
-  };
 
   /**
    * 显示关于信息
@@ -186,7 +162,7 @@ export default function SettingsScreen() {
             })}
             
             {renderSettingItem({
-              icon: <ShareIcon name="language" size={20} color={colors.primary} />,
+              icon: <Ionicons name="language" size={20} color={colors.primary} />,
               title: '语言',
               subtitle: currentLanguage === 'zh' ? '中文' : 'English',
               children: (
@@ -214,16 +190,6 @@ export default function SettingsScreen() {
         title: t('settings.other'),
         children: (
           <>
-            {renderSettingItem({
-              icon: <ShareIcon name="share" size={20} color={colors.primary} />,
-              title: t('settings.shareApp'),
-              subtitle: t('settings.shareAppHint'),
-              children: (
-                <TouchableOpacity style={[styles.actionButton, { backgroundColor: colors.primary + '20' }]} onPress={shareApp}>
-                  <Text style={[styles.actionButtonText, { color: colors.primary }]}>{t('common.share')}</Text>
-                </TouchableOpacity>
-              ),
-            })}
 
             {renderSettingItem({
               icon: <MailIcon name="mail" size={20} color={colors.primary} />,
@@ -236,16 +202,6 @@ export default function SettingsScreen() {
               ),
             })}
 
-            {renderSettingItem({
-              icon: <GithubIcon name="logo-github" size={20} color={colors.primary} />,
-              title: t('settings.sourceCode'),
-              subtitle: t('settings.sourceCodeHint'),
-              children: (
-                <TouchableOpacity style={[styles.actionButton, { backgroundColor: colors.primary + '20' }]} onPress={openGithub}>
-                  <Text style={[styles.actionButtonText, { color: colors.primary }]}>{t('common.view')}</Text>
-                </TouchableOpacity>
-              ),
-            })}
 
             {renderSettingItem({
               icon: <InfoIcon name="information-circle" size={20} color={colors.primary} />,
