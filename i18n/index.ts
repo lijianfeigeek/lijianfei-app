@@ -13,7 +13,7 @@ const LANGUAGE_STORAGE_KEY = 'app_language';
 const getStoredLanguage = async (): Promise<string> => {
   try {
     const language = await AsyncStorage.getItem(LANGUAGE_STORAGE_KEY);
-    return language || 'zh'; // 默认中文
+    return language || 'en'; // 默认英文
   } catch (error) {
     console.error('Error getting stored language:', error);
     return 'zh';
@@ -41,8 +41,8 @@ const resources = {
 
 i18n.use(initReactI18next).init({
   resources,
-  lng: 'zh', // 默认语言，会在初始化后更新
-  fallbackLng: 'zh',
+  lng: 'en', // 默认语言，会在初始化后更新
+  fallbackLng: 'en',
   
   interpolation: {
     escapeValue: false, // React 已经进行了转义
