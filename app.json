@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.lijianfei.Awesome-Nano-Banana-Cases"
+      "bundleIdentifier": "com.lijianfei.BananaAICase"
     },
     "android": {
       "adaptiveIcon": {
