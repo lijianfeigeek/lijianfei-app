@@ -57,13 +57,6 @@ export default function SettingsScreen() {
     // 实现深色模式切换逻辑 - 使用 Appearance API 来切换系统主题
     Appearance.setColorScheme(value ? 'dark' : 'light');
     console.log('深色模式:', value ? '开启' : '关闭');
-    
-    // 显示切换提示
-    Alert.alert(
-      t('settings.darkModeAlert'),
-      `${t('settings.darkMode')}${value ? t('settings.darkModeEnabledAlert') : t('settings.darkModeDisabledAlert')}`,
-      [{ text: t('common.confirm') }]
-    );
   };
 
   /**
