@@ -92,3 +92,27 @@ The project is configured for:
 - Native compilation for iOS and Android
 - Web support through Expo web
 - TypeScript compilation with strict type checking
+
+## Current Version Status
+
+- **Expo SDK**: 54.0.2
+- **React Native**: 0.81.4
+- **React**: 18.3.1
+- **Expo Router**: 6.0.1
+- **New Architecture**: Enabled (Fabric/TurboModules)
+- **iOS Build**: ✅ Working (with fast_float fix)
+
+### Known Issues and Fixes
+
+#### iOS Build Issue - fast_float Version Conflict
+React Native 0.81.4 has a known dependency conflict where RCT-Folly requires `fast_float >= 6.1.4` but React Native provides `fast_float 8.0.0`. This has been resolved by manually modifying the dependency specification in `node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`:
+
+```ruby
+# Fixed line 27 in RCT-Folly.podspec
+spec.dependency "fast_float", ">= 6.1.4"  # Changed from "8.0.0"
+```
+
+**Important**: This fix must be reapplied after running `npm install` or any dependency update commands.
+
+#### Upgrade Process
+The project was successfully upgraded from Expo SDK 53.0.22 to 54.0.2 and React Native 0.79.5 to 0.81.4. See `upgrade-summary.md` for detailed documentation of the upgrade process.
