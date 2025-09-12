@@ -14,7 +14,7 @@ import {
   Modal,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useColorScheme, Appearance } from 'react-native';
+import { useColorScheme, Appearance, Platform } from 'react-native';
 import { 
   Ionicons as MoonIcon, 
   Ionicons as SunIcon, 
@@ -90,7 +90,31 @@ export default function SettingsScreen() {
    * 发送反馈邮件
    */
   const sendFeedback = () => {
-    Linking.openURL('mailto:me@lijianfei.com?subject=Banana AI Case feedback');
+    const subject = encodeURIComponent('Banana AI Case - 内容反馈');
+    const body = encodeURIComponent(
+      `请描述您发现的问题或建议：
+
+应用版本：1.0.0
+设备信息：${Platform.OS} ${Platform.Version}
+
+问题描述：
+[请在此处详细描述您发现的内容问题或建议]
+
+如需举报特定案例，请提供案例ID或标题：
+`
+    );
+    Linking.openURL(`mailto:me@lijianfei.com?subject=${subject}&body=${body}`);
+  };
+
+  /**
+   * 显示内容来源说明
+   */
+  const showContentSource = () => {
+    Alert.alert(
+      '内容来源说明',
+      '本应用展示的所有AI生成案例均来自Twitter等平台的公开分享。我们已对所有内容进行预先审核，确保内容质量和合规性。如您发现任何不当内容，请通过"意见反馈"功能联系我们，我们会在24小时内处理。',
+      [{ text: '知道了' }]
+    );
   };
 
 
@@ -216,6 +240,17 @@ export default function SettingsScreen() {
               ),
             })}
 
+
+            {renderSettingItem({
+              icon: <Ionicons name="document-text" size={20} color={colors.primary} />,
+              title: '内容来源',
+              subtitle: '了解案例内容的来源和审核机制',
+              children: (
+                <TouchableOpacity style={[styles.actionButton, { backgroundColor: colors.primary + '20' }]} onPress={showContentSource}>
+                  <Text style={[styles.actionButtonText, { color: colors.primary }]}>查看说明</Text>
+                </TouchableOpacity>
+              ),
+            })}
 
             {renderSettingItem({
               icon: <InfoIcon name="information-circle" size={20} color={colors.primary} />,

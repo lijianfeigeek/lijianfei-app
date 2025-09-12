@@ -386,7 +386,7 @@ export default function SearchScreen() {
                   {getText(item.description)}
                 </Text>
                 <View style={styles.resultMeta}>
-                  <Text style={[styles.resultAuthor, { color: colors.tabIconDefault }]}>{item.author}</Text>
+                  <Text style={[styles.resultAuthor, { color: colors.tabIconDefault }]}>📎 来源：{item.author}</Text>
                   <Text style={[styles.resultCategory, { color: colors.primary }]}>{getText(item.category)}</Text>
                 </View>
               </View>

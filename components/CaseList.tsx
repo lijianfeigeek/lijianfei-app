@@ -94,7 +94,7 @@ export const CaseList: React.FC<CaseListProps> = ({
         {/* 元信息行 */}
         <View style={styles.metaRow}>
           <Text style={[styles.caseAuthor, { color: colors.tabIconDefault, backgroundColor: colors.border + '20' }]}>
-            👤 {item.author}
+            📎 来源：{item.author}
           </Text>
           <Text style={[styles.caseCategory, { color: colors.primary, backgroundColor: colors.primary + '20' }]}>
             📁 {getText(item.category)}
