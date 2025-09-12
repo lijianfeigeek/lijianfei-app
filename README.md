@@ -12,13 +12,20 @@ A modern React Native application built with Expo that showcases AI-generated im
 - **📱 Cross-Platform**: Optimized for iOS, Android, and Web
 - **⚡ Performance**: Smooth animations with React Native Reanimated
 
-## 🛠️ Tech Stack
+## 📚 Additional Documentation
+
+### Upgrade Documentation
+- [`upgrade-summary.md`](./upgrade-summary.md) - Detailed upgrade documentation from Expo SDK 53 to 54 and React Native 0.79 to 0.81
+- Includes technical details, problem-solving steps, and build fixes
+
+## 🛠️ Development Environment
 
 ### Core Technologies
-- **React Native** (v0.79.5) - Cross-platform mobile framework
-- **Expo** (v53.0.22) - Development platform and SDK
+- **React Native** (v0.81.4) - Cross-platform mobile framework
+- **Expo** (v54.0.2) - Development platform and SDK
 - **TypeScript** (v5.8.3) - Type-safe JavaScript
-- **Expo Router** (v5.1.5) - File-based routing system
+- **Expo Router** (v6.0.1) - File-based routing system
+- **New Architecture** - Fabric & TurboModules enabled
 
 ### UI & Navigation
 - **React Navigation** (v7.1.6) - Navigation library
@@ -142,6 +149,8 @@ interface Case {
 - Node.js (v18 or higher)
 - npm or yarn
 - Expo CLI (`npm install -g @expo/cli`)
+- iOS development tools (for iOS builds)
+- Android Studio (for Android builds)
 
 ### Installation
 1. **Clone the repository**
@@ -155,7 +164,15 @@ interface Case {
    npm install
    ```
 
-3. **Start development server**
+3. **Apply iOS build fix (if needed)**
+   After running `npm install`, you may need to apply the fast_float fix:
+   ```bash
+   # The fix is documented in upgrade-summary.md
+   # Line 27 in node_modules/react-native/third-party-podspecs/RCT-Folly.podspec
+   spec.dependency "fast_float", ">= 6.1.4"  # Changed from "8.0.0"
+   ```
+
+4. **Start development server**
    ```bash
    npm start
    ```
