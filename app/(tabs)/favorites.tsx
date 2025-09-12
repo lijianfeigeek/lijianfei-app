@@ -79,7 +79,7 @@ export default function FavoritesScreen() {
           {getText(item.description)}
         </Text>
         <View style={styles.favoriteMeta}>
-          <Text style={[styles.favoriteAuthor, { color: colors.tabIconDefault, backgroundColor: colors.border + '20' }]}>📎 来源：{item.author}</Text>
+          <Text style={[styles.favoriteAuthor, { color: colors.tabIconDefault, backgroundColor: colors.border + '20' }]}>👤 {item.author}</Text>
           <Text style={[styles.favoriteCategory, { color: colors.primary, backgroundColor: colors.primary + '20' }]}>📁 {getText(item.category)}</Text>
         </View>
         <View style={styles.favoriteTags}>
