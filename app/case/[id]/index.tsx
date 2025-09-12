@@ -547,6 +547,10 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   
+  headerAction: {
+    padding: 8,
+  },
+  
   actionButton: {
     padding: 8,
     borderRadius: 20,
