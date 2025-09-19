@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartReview - 高保真原型设计</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&family=SF+Pro+Text:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ios-blue: #007AFF;
+            --ios-green: #34C759;
+            --ios-indigo: #5856D6;
+            --ios-orange: #FF9500;
+            --ios-red: #FF3B30;
+            --ios-purple: #AF52DE;
+            --ios-pink: #FF2D55;
+            --ios-gray: #8E8E93;
+            --ios-gray2: #C7C7CC;
+            --ios-gray3: #D1D1D6;
+            --ios-gray4: #E5E5EA;
+            --ios-gray5: #F2F2F7;
+            --ios-gray6: #FFFFFF;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+            --radius-xl: 24px;
+            --radius-lg: 20px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+            --radius-xs: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .heading {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .phone-frame {
+            width: 393px;
+            height: 852px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border-radius: 55px;
+            padding: 12px;
+            box-shadow:
+                0 25px 50px -12px rgba(0, 0, 0, 0.8),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 43px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-bar {
+            height: 44px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            font-size: 14px;
+            font-weight: 600;
+            position: relative;
+            z-index: 100;
+        }
+
+        .status-icons {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .signal-icon {
+            width: 18px;
+            height: 12px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 12"><rect x="0" y="8" width="2" height="4" fill="%23000" opacity="0.3"/><rect x="4" y="6" width="2" height="6" fill="%23000" opacity="0.5"/><rect x="8" y="4" width="2" height="8" fill="%23000" opacity="0.7"/><rect x="12" y="2" width="2" height="10" fill="%23000"/></svg>') no-repeat center;
+            background-size: contain;
+        }
+
+        .wifi-icon {
+            width: 16px;
+            height: 12px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 12"><path d="M8 1.5C5.5 1.5 3.2 2.5 1.5 4.2L0.5 3.2C2.5 1.2 5.1 0 8 0C10.9 0 13.5 1.2 15.5 3.2L14.5 4.2C12.8 2.5 10.5 1.5 8 1.5Z" fill="%23000"/><path d="M8 4.5C6.2 4.5 4.5 5.2 3.2 6.5L2.2 5.5C3.8 3.9 5.8 3 8 3C10.2 3 12.2 3.9 13.8 5.5L12.8 6.5C11.5 5.2 9.8 4.5 8 4.5Z" fill="%23000"/><path d="M8 7.5C7.2 7.5 6.5 7.8 5.9 8.4L5 7.5C5.8 6.7 6.8 6.2 8 6.2C9.2 6.2 10.2 6.7 11 7.5L10.1 8.4C9.5 7.8 8.8 7.5 8 7.5Z" fill="%23000"/><circle cx="8" cy="10" r="1.5" fill="%23000"/></svg>') no-repeat center;
+            background-size: contain;
+        }
+
+        .battery-icon {
+            width: 24px;
+            height: 12px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 12"><rect x="1" y="2" width="20" height="8" rx="2" fill="none" stroke="%23000" stroke-width="1"/><rect x="21" y="4" width="2" height="4" rx="0.5" fill="%23000"/><rect x="3" y="4" width="14" height="4" rx="1" fill="%23000"/></svg>') no-repeat center;
+            background-size: contain;
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 28px;
+            background: linear-gradient(180deg, #000 0%, #000 80%, transparent 100%);
+            border-radius: 0 0 20px 20px;
+            z-index: 200;
+        }
+
+        .home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 134px;
+            height: 5px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 100px;
+            z-index: 100;
+        }
+
+        .camera-button {
+            width: 88px;
+            height: 88px;
+            background: linear-gradient(135deg, var(--ios-blue) 0%, var(--ios-indigo) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+            box-shadow:
+                0 8px 32px rgba(0, 122, 255, 0.4),
+                0 4px 16px rgba(0, 122, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .camera-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 100%);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .camera-button:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow:
+                0 12px 40px rgba(0, 122, 255, 0.5),
+                0 6px 20px rgba(0, 122, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+
+        .camera-button:hover::before {
+            opacity: 1;
+        }
+
+        .camera-button:active {
+            transform: scale(0.96) translateY(0px);
+            box-shadow:
+                0 4px 16px rgba(0, 122, 255, 0.3),
+                0 2px 8px rgba(0, 122, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .action-button {
+            background: linear-gradient(135deg, var(--ios-blue) 0%, var(--ios-indigo) 100%);
+            color: white;
+            padding: 18px 32px;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            font-size: 17px;
+            font-family: 'SF Pro Text', sans-serif;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border: none;
+            position: relative;
+            overflow: hidden;
+            box-shadow:
+                0 4px 16px rgba(0, 122, 255, 0.3),
+                0 2px 8px rgba(0, 122, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .action-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .action-button:hover::before {
+            left: 100%;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                0 8px 24px rgba(0, 122, 255, 0.4),
+                0 4px 12px rgba(0, 122, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+
+        .action-button:active {
+            transform: translateY(0px) scale(0.98);
+            box-shadow:
+                0 2px 8px rgba(0, 122, 255, 0.2),
+                0 1px 4px rgba(0, 122, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .secondary-button {
+            background: var(--ios-gray5);
+            color: var(--ios-blue);
+            padding: 16px 24px;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            font-size: 17px;
+            font-family: 'SF Pro Text', sans-serif;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 1px solid var(--ios-gray3);
+        }
+
+        .secondary-button:hover {
+            background: var(--ios-gray4);
+            transform: translateY(-1px);
+        }
+
+        .secondary-button:active {
+            transform: translateY(0px) scale(0.98);
+            background: var(--ios-gray3);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 18px 20px;
+            border: 2px solid var(--ios-gray3);
+            border-radius: var(--radius-lg);
+            font-size: 17px;
+            font-family: 'SF Pro Text', sans-serif;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--ios-gray6);
+            color: #000;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--ios-blue);
+            background: var(--ios-gray6);
+            box-shadow:
+                0 0 0 4px rgba(0, 122, 255, 0.1),
+                0 4px 16px rgba(0, 122, 255, 0.1);
+        }
+
+        .input-field::placeholder {
+            color: var(--ios-gray2);
+        }
+
+        .comment-card {
+            background: var(--ios-gray6);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--ios-gray3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .comment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1), transparent);
+        }
+
+        .loading-spinner {
+            width: 56px;
+            height: 56px;
+            border: 3px solid var(--ios-gray3);
+            border-top: 3px solid var(--ios-blue);
+            border-radius: 50%;
+            animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            position: relative;
+        }
+
+        .loading-spinner::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border: 3px solid transparent;
+            border-top: 3px solid rgba(0, 122, 255, 0.2);
+            border-radius: 50%;
+            animation: spin 2s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-up {
+            animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(120px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .pulse-animation {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        .bounce-in {
+            animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen.active {
+            z-index: 10;
+        }
+
+        .screen.hidden {
+            z-index: 1;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 83px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(40px);
+            border-top: 1px solid var(--ios-gray3);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: 25px;
+            z-index: 50;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            color: var(--ios-gray);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+        }
+
+        .nav-item.active {
+            color: var(--ios-blue);
+            background: rgba(0, 122, 255, 0.1);
+        }
+
+        .nav-item:hover {
+            color: var(--ios-blue);
+            background: rgba(0, 122, 255, 0.05);
+        }
+
+        .nav-item i {
+            font-size: 22px;
+            margin-bottom: 1px;
+        }
+
+        .nav-item span {
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .image-preview {
+            width: 100%;
+            height: 200px;
+            background: var(--ios-gray5);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--ios-gray);
+            font-size: 48px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .image-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(88,86,214,0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .image-preview:hover::before {
+            opacity: 1;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .image-preview:hover img {
+            transform: scale(1.02);
+        }
+
+        .success-checkmark {
+            width: 64px;
+            height: 64px;
+            background: var(--ios-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            margin-bottom: 20px;
+            animation: scaleIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 8px 24px rgba(52, 199, 89, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-checkmark::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            animation: ripple 1.5s ease-out infinite;
+        }
+
+        @keyframes scaleIn {
+            0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+            50% { transform: scale(1.1) rotate(-10deg); opacity: 0.8; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        .option-card {
+            background: var(--ios-gray6);
+            border: 2px solid var(--ios-gray3);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0,122,255,0.3), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .option-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .option-card:hover {
+            border-color: var(--ios-blue);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 122, 255, 0.15);
+            background: var(--ios-gray6);
+        }
+
+        .option-card:active {
+            transform: translateY(-2px) scale(0.98);
+            box-shadow: 0 6px 16px rgba(0, 122, 255, 0.1);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--ios-gray3);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--ios-blue) 0%, var(--ios-indigo) 100%);
+            border-radius: 3px;
+            animation: progress 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s ease-in-out infinite;
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            50% { width: 75%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, var(--ios-gray3) 25%, var(--ios-gray4) 50%, var(--ios-gray3) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s ease-in-out infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        .haptic-feedback {
+            animation: haptic 0.1s ease-out;
+        }
+
+        @keyframes haptic {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- 标题 -->
+        <div class="text-center mb-8">
+            <h1 class="text-5xl font-bold text-white mb-3 heading">SmartReview 原型设计</h1>
+            <p class="text-white/90 text-lg">极简AI评论生成应用 - 高保真原型 (专业版)</p>
+        </div>
+
+        <!-- 界面展示区域 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
+
+            <!-- 界面1: 主界面 -->
+            <div class="text-center">
+                <h3 class="text-white font-semibold mb-4 heading">主界面</h3>
+                <div class="phone-frame">
+                    <div class="phone-screen">
+                        <!-- 状态栏 -->
+                        <div class="status-bar">
+                            <span class="font-medium">9:41</span>
+                            <div class="status-icons">
+                                <div class="signal-icon"></div>
+                                <div class="wifi-icon"></div>
+                                <div class="battery-icon"></div>
+                            </div>
+                        </div>
+                        <div class="notch"></div>
+
+                        <!-- 主界面内容 -->
+                        <div class="screen active" id="homeScreen">
+                            <div class="flex-1 flex flex-col items-center justify-center px-8" style="margin-top: 44px;">
+                                <!-- 品牌标识 -->
+                                <div class="mb-12 text-center fade-in">
+                                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg">
+                                        <i class="fas fa-magic text-white text-2xl"></i>
+                                    </div>
+                                    <h1 class="text-3xl font-bold text-gray-900 mb-2 heading">SmartReview</h1>
+                                    <p class="text-gray-600 text-lg">AI驱动的评论生成器</p>
+                                </div>
+
+                                <!-- 主要CTA按钮 -->
+                                <div class="camera-button pulse-animation mb-8">
+                                    <i class="fas fa-camera"></i>
+                                </div>
+
+                                <!-- 引导文字 -->
+                                <div class="text-center mb-8">
+                                    <p class="text-gray-900 font-medium text-lg mb-2">开始智能评论之旅</p>
+                                    <p class="text-gray-500">
+                                        <span class="text-sm">AI将根据您的图片和用途生成个性化评论</span>
+                                    </p>
+                                </div>
+
+                                <!-- 功能亮点 -->
+                                <div class="grid grid-cols-3 gap-4 text-center">
+                                    <div class="fade-in">
+                                        <div class="w-12 h-12 bg-blue-100 rounded-xl mx-auto mb-2 flex items-center justify-center">
+                                            <i class="fas fa-bolt text-blue-600"></i>
+                                        </div>
+                                        <p class="text-xs text-gray-600">快速</p>
+                                    </div>
+                                    <div class="fade-in" style="animation-delay: 0.1s;">
+                                        <div class="w-12 h-12 bg-green-100 rounded-xl mx-auto mb-2 flex items-center justify-center">
+                                            <i class="fas fa-brain text-green-600"></i>
+                                        </div>
+                                        <p class="text-xs text-gray-600">智能</p>
+                                    </div>
+                                    <div class="fade-in" style="animation-delay: 0.2s;">
+                                        <div class="w-12 h-12 bg-purple-100 rounded-xl mx-auto mb-2 flex items-center justify-center">
+                                            <i class="fas fa-star text-purple-600"></i>
+                                        </div>
+                                        <p class="text-xs text-gray-600">优质</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 底部导航 -->
+                            <div class="bottom-nav">
+                                <div class="nav-item active">
+                                    <i class="fas fa-home"></i>
+                                    <span>首页</span>
+                                </div>
+                                <div class="nav-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span>历史</span>
+                                </div>
+                                <div class="nav-item">
+                                    <i class="fas fa-user"></i>
+                                    <span>我的</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="home-indicator"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 界面2: 图片来源选择 -->
+            <div class="text-center">
+                <h3 class="text-white font-semibold mb-4 heading">图片来源选择</h3>
+                <div class="phone-frame">
+                    <div class="phone-screen">
+                        <!-- 状态栏 -->
+                        <div class="status-bar">
+                            <span class="font-medium">9:41</span>
+                            <div class="status-icons">
+                                <div class="signal-icon"></div>
+                                <div class="wifi-icon"></div>
+                                <div class="battery-icon"></div>
+                            </div>
+                        </div>
+                        <div class="notch"></div>
+
+                        <!-- 选择界面内容 -->
+                        <div class="screen active slide-up">
+                            <div class="flex-1 flex flex-col px-6" style="margin-top: 44px; padding-bottom: 80px;">
+                                <!-- 顶部导航 -->
+                                <div class="flex items-center mb-8">
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors cursor-pointer">
+                                        <i class="fas fa-arrow-left text-xl text-gray-700"></i>
+                                    </div>
+                                    <h2 class="text-xl font-semibold heading flex-1 text-center mr-10">选择图片</h2>
+                                </div>
+
+                                <!-- 选项卡片 -->
+                                <div class="space-y-4 mb-8">
+                                    <div class="option-card">
+                                        <div class="flex items-center">
+                                            <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+                                                <i class="fas fa-camera text-white text-xl"></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <h3 class="font-semibold text-gray-900 text-lg">拍照</h3>
+                                                <p class="text-gray-600 text-sm">拍摄新照片</p>
+                                            </div>
+                                            <div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
+                                                <i class="fas fa-chevron-right text-blue-600 text-sm"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="option-card">
+                                        <div class="flex items-center">
+                                            <div class="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+                                                <i class="fas fa-images text-white text-xl"></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <h3 class="font-semibold text-gray-900 text-lg">相册</h3>
+                                                <p class="text-gray-600 text-sm">从相册选择</p>
+                                            </div>
+                                            <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center">
+                                                <i class="fas fa-chevron-right text-green-600 text-sm"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 最近照片 -->
+                                <div class="mb-6">
+                                    <h3 class="text-gray-700 font-medium mb-3">最近照片</h3>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <div class="aspect-square rounded-lg overflow-hidden">
+                                            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&h=200&fit=crop" alt="最近照片1" class="w-full h-full object-cover hover:scale-105 transition-transform">
+                                        </div>
+                                        <div class="aspect-square rounded-lg overflow-hidden">
+                                            <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=200&h=200&fit=crop" alt="最近照片2" class="w-full h-full object-cover hover:scale-105 transition-transform">
+                                        </div>
+                                        <div class="aspect-square rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                                            <div class="text-center">
+                                                <i class="fas fa-plus text-gray-400 text-xl mb-1"></i>
+                                                <p class="text-xs text-gray-500">查看全部</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 提示信息 -->
+                                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                                    <div class="flex items-start">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                            <i class="fas fa-lightbulb text-blue-600 text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-blue-900 font-medium text-sm mb-1">小贴士</p>
+                                            <p class="text-blue-700 text-sm">选择清晰、光线充足的照片能获得更好的评论效果</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="home-indicator"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 界面3: 用途输入 -->
+            <div class="text-center">
+                <h3 class="text-white font-semibold mb-4 heading">用途输入</h3>
+                <div class="phone-frame">
+                    <div class="phone-screen">
+                        <!-- 状态栏 -->
+                        <div class="status-bar">
+                            <span class="font-medium">9:41</span>
+                            <div class="status-icons">
+                                <div class="signal-icon"></div>
+                                <div class="wifi-icon"></div>
+                                <div class="battery-icon"></div>
+                            </div>
+                        </div>
+                        <div class="notch"></div>
+
+                        <!-- 输入界面内容 -->
+                        <div class="screen active slide-up">
+                            <div class="flex-1 flex flex-col px-6" style="margin-top: 44px; padding-bottom: 80px;">
+                                <!-- 顶部导航 -->
+                                <div class="flex items-center mb-6">
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors cursor-pointer">
+                                        <i class="fas fa-arrow-left text-xl text-gray-700"></i>
+                                    </div>
+                                    <h2 class="text-xl font-semibold heading flex-1 text-center mr-10">告诉我们用途</h2>
+                                </div>
+
+                                <!-- 图片预览 -->
+                                <div class="image-preview mb-6 bounce-in">
+                                    <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop" alt="选中的图片">
+                                </div>
+
+                                <!-- AI提示 -->
+                                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 mb-6">
+                                    <div class="flex items-start">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                            <i class="fas fa-robot text-white text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-gray-900 font-medium text-sm mb-1">AI助手</p>
+                                            <p class="text-gray-600 text-sm">告诉我这个物品的用途，我会为您生成更精准的评论</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 输入框 -->
+                                <div class="mb-6">
+                                    <label class="block text-gray-900 font-medium mb-3 text-lg">您买这个是为什么？</label>
+                                    <input type="text" class="input-field" placeholder="例如：生日礼物、日常使用、收藏等...">
+                                </div>
+
+                                <!-- 快速选项 -->
+                                <div class="mb-8">
+                                    <p class="text-gray-700 font-medium mb-3">快速选择，或输入自定义：</p>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <span class="px-4 py-3 bg-gray-100 rounded-xl text-sm text-gray-700 cursor-pointer hover:bg-gray-200 transition-colors text-center font-medium">🎁 生日礼物</span>
+                                        <span class="px-4 py-3 bg-gray-100 rounded-xl text-sm text-gray-700 cursor-pointer hover:bg-gray-200 transition-colors text-center font-medium">🏠 日常使用</span>
+                                        <span class="px-4 py-3 bg-gray-100 rounded-xl text-sm text-gray-700 cursor-pointer hover:bg-gray-200 transition-colors text-center font-medium">👥 送朋友</span>
+                                        <span class="px-4 py-3 bg-gray-100 rounded-xl text-sm text-gray-700 cursor-pointer hover:bg-gray-200 transition-colors text-center font-medium">💼 工作用</span>
+                                    </div>
+                                </div>
+
+                                <!-- 示例提示 -->
+                                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+                                    <div class="flex items-start">
+                                        <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                            <i class="fas fa-star text-amber-600 text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-amber-900 font-medium text-sm mb-1">优质示例</p>
+                                            <p class="text-amber-700 text-sm">"送给女友的生日礼物，她很喜欢这个牌子"</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 生成按钮 -->
+                                <button class="action-button w-full">
+                                    <i class="fas fa-sparkles mr-2"></i>
+                                    开始生成评论
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="home-indicator"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 界面4: 生成中 -->
+            <div class="text-center">
+                <h3 class="text-white font-semibold mb-4 heading">AI生成中</h3>
+                <div class="phone-frame">
+                    <div class="phone-screen">
+                        <!-- 状态栏 -->
+                        <div class="status-bar">
+                            <span class="font-medium">9:41</span>
+                            <div class="status-icons">
+                                <div class="signal-icon"></div>
+                                <div class="wifi-icon"></div>
+                                <div class="battery-icon"></div>
+                            </div>
+                        </div>
+                        <div class="notch"></div>
+
+                        <!-- 生成中界面内容 -->
+                        <div class="screen active slide-up">
+                            <div class="flex-1 flex flex-col items-center justify-center px-8" style="margin-top: 44px;">
+                                <!-- AI思考动画 -->
+                                <div class="relative mb-8">
+                                    <div class="loading-spinner"></div>
+                                    <!-- 粒子效果 -->
+                                    <div class="particle" style="top: -20px; left: 50%; animation-delay: 0s;">
+                                        <i class="fas fa-sparkles text-blue-500"></i>
+                                    </div>
+                                    <div class="particle" style="top: -30px; left: 30%; animation-delay: 1s;">
+                                        <i class="fas fa-star text-indigo-500"></i>
+                                    </div>
+                                    <div class="particle" style="top: -25px; left: 70%; animation-delay: 2s;">
+                                        <i class="fas fa-magic text-purple-500"></i>
+                                    </div>
+                                </div>
+
+                                <h3 class="text-2xl font-bold text-gray-900 mb-3 heading">AI正在创作</h3>
+                                <p class="text-gray-600 text-center mb-8 leading-relaxed">
+                                    <span class="block mb-1">🎨 分析图片视觉细节</span>
+                                    <span class="block mb-1">🧠 理解使用场景</span>
+                                    <span class="block">✍️ 撰写个性化评论</span>
+                                </p>
+
+                                <!-- 进度条 -->
+                                <div class="progress-bar w-full max-w-sm mb-8">
+                                    <div class="progress-fill"></div>
+                                </div>
+
+                                <!-- 处理信息卡片 -->
+                                <div class="bg-gray-50 rounded-xl p-4 w-full max-w-xs">
+                                    <div class="flex items-center mb-3">
+                                        <div class="image-preview w-16 h-16 mr-3">
+                                            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&h=200&fit=crop" alt="处理中的图片">
+                                        </div>
+                                        <div>
+                                            <p class="text-sm text-gray-600">用途</p>
+                                            <p class="font-medium text-gray-900">🎁 生日礼物</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between text-xs text-gray-500">
+                                        <span>预计时间: 2秒</span>
+                                        <span>正在优化...</span>
+                                    </div>
+                                </div>
+
+                                <!-- 骨架屏效果 -->
+                                <div class="mt-6 w-full max-w-xs">
+                                    <div class="skeleton h-4 rounded-lg mb-2"></div>
+                                    <div class="skeleton h-4 rounded-lg w-3/4"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="home-indicator"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 界面5: 生成结果 -->
+            <div class="text-center">
+                <h3 class="text-white font-semibold mb-4 heading">生成结果</h3>
+                <div class="phone-frame">
+                    <div class="phone-screen">
+                        <!-- 状态栏 -->
+                        <div class="status-bar">
+                            <span class="font-medium">9:41</span>
+                            <div class="status-icons">
+                                <div class="signal-icon"></div>
+                                <div class="wifi-icon"></div>
+                                <div class="battery-icon"></div>
+                            </div>
+                        </div>
+                        <div class="notch"></div>
+
+                        <!-- 结果界面内容 -->
+                        <div class="screen active slide-up">
+                            <div class="flex-1 flex flex-col px-6" style="margin-top: 44px; padding-bottom: 80px;">
+                                <!-- 顶部导航 -->
+                                <div class="flex items-center justify-between mb-6">
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors cursor-pointer">
+                                        <i class="fas fa-arrow-left text-xl text-gray-700"></i>
+                                    </div>
+                                    <h2 class="text-xl font-semibold heading">生成完成</h2>
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors cursor-pointer">
+                                        <i class="fas fa-share-alt text-xl text-gray-700"></i>
+                                    </div>
+                                </div>
+
+                                <!-- AI评分 -->
+                                <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 mb-6">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-green-800 font-medium text-sm">AI质量评分</p>
+                                            <div class="flex items-center mt-1">
+                                                <div class="flex text-yellow-400">
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star-half-alt"></i>
+                                                </div>
+                                                <span class="text-green-700 font-medium ml-2">4.8分</span>
+                                            </div>
+                                        </div>
+                                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-check text-green-600 text-lg"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 图片和评论 -->
+                                <div class="comment-card fade-in">
+                                    <div class="image-preview h-52 mb-4">
+                                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop" alt="原始图片">
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <p class="text-gray-700 font-medium">
+                                                <i class="fas fa-tag text-blue-500 mr-1"></i>
+                                                用途：生日礼物
+                                            </p>
+                                            <div class="flex items-center text-sm text-gray-500">
+                                                <i class="fas fa-clock mr-1"></i>
+                                                <span>刚刚</span>
+                                            </div>
+                                        </div>
+                                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-5">
+                                            <div class="flex items-start mb-2">
+                                                <i class="fas fa-quote-left text-blue-500 text-sm mr-2 mt-1"></i>
+                                                <p class="text-gray-900 leading-relaxed text-lg font-medium">
+                                                    收到时包装很精致，朋友说这礼物有品位，用了一周，音质比预期好，推荐！
+                                                </p>
+                                            </div>
+                                            <div class="flex items-center justify-between text-sm">
+                                                <span class="text-gray-500">
+                                                    <i class="fas fa-text-width mr-1"></i>
+                                                    28字
+                                                </span>
+                                                <span class="text-green-600 font-medium">
+                                                    <i class="fas fa-check-circle mr-1"></i>
+                                                    已优化
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 操作按钮 -->
+                                <div class="mt-6 space-y-3">
+                                    <button class="action-button w-full" onclick="copyComment()">
+                                        <i class="fas fa-copy mr-2"></i>
+                                        一键复制评论
+                                    </button>
+
+                                    <div class="flex gap-3">
+                                        <button class="secondary-button flex-1" onclick="regenerateComment()">
+                                            <i class="fas fa-redo mr-2"></i>
+                                            重新生成
+                                        </button>
+                                        <button class="secondary-button flex-1" onclick="editComment()">
+                                            <i class="fas fa-edit mr-2"></i>
+                                            编辑
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- 分享选项 -->
+                                <div class="mt-6">
+                                    <p class="text-gray-700 font-medium mb-3 text-center">快速分享</p>
+                                    <div class="flex justify-center space-x-4">
+                                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center cursor-pointer hover:bg-green-200 transition-colors">
+                                            <i class="fab fa-weixin text-green-600 text-xl"></i>
+                                        </div>
+                                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center cursor-pointer hover:bg-blue-200 transition-colors">
+                                            <i class="fab fa-qq text-blue-600 text-xl"></i>
+                                        </div>
+                                        <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center cursor-pointer hover:bg-red-200 transition-colors">
+                                            <i class="fab fa-weibo text-red-600 text-xl"></i>
+                                        </div>
+                                        <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors">
+                                            <i class="fas fa-ellipsis-h text-gray-600"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="home-indicator"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 界面6: 复制成功 -->
+            <div class="text-center">
+                <h3 class="text-white font-semibold mb-4 heading">复制成功</h3>
+                <div class="phone-frame">
+                    <div class="phone-screen">
+                        <!-- 状态栏 -->
+                        <div class="status-bar">
+                            <span class="font-medium">9:41</span>
+                            <div class="status-icons">
+                                <div class="signal-icon"></div>
+                                <div class="wifi-icon"></div>
+                                <div class="battery-icon"></div>
+                            </div>
+                        </div>
+                        <div class="notch"></div>
+
+                        <!-- 成功界面内容 -->
+                        <div class="screen active slide-up">
+                            <div class="flex-1 flex flex-col items-center justify-center px-8" style="margin-top: 44px;">
+                                <!-- 成功动画 -->
+                                <div class="success-checkmark mb-6">
+                                    <i class="fas fa-check"></i>
+                                </div>
+
+                                <h3 class="text-3xl font-bold text-gray-900 mb-3 heading">复制成功！</h3>
+                                <p class="text-gray-600 text-center mb-8 leading-relaxed">
+                                    评论已复制到剪贴板<br>
+                                    <span class="text-lg">可以直接粘贴使用了</span>
+                                </p>
+
+                                <!-- 评论预览卡片 -->
+                                <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-5 mb-8 w-full">
+                                    <div class="flex items-center mb-3">
+                                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-check-double text-green-600 text-sm"></i>
+                                        </div>
+                                        <p class="text-green-800 font-medium">复制的内容</p>
+                                    </div>
+                                    <div class="bg-white rounded-lg p-4 border border-green-100">
+                                        <p class="text-gray-900 text-center leading-relaxed">
+                                            "收到时包装很精致，朋友说这礼物有品位，用了一周，音质比预期好，推荐！"
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- 使用建议 -->
+                                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-8 w-full">
+                                    <div class="flex items-start">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                            <i class="fas fa-lightbulb text-blue-600 text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-blue-900 font-medium text-sm mb-1">使用建议</p>
+                                            <p class="text-blue-700 text-sm">您可以将此评论粘贴到电商平台、社交媒体或聊天应用中</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 操作按钮 -->
+                                <div class="space-y-3 w-full">
+                                    <button class="action-button w-full">
+                                        <i class="fas fa-plus mr-2"></i>
+                                        再来一条评论
+                                    </button>
+                                    <div class="flex gap-3">
+                                        <button class="secondary-button flex-1">
+                                            <i class="fas fa-share-alt mr-2"></i>
+                                            分享应用
+                                        </button>
+                                        <button class="secondary-button flex-1">
+                                            <i class="fas fa-history mr-2"></i>
+                                            查看历史
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- 粒子庆祝效果 -->
+                                <div class="particle" style="top: 10%; left: 20%; animation-delay: 0s;">
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                </div>
+                                <div class="particle" style="top: 15%; left: 80%; animation-delay: 0.5s;">
+                                    <i class="fas fa-sparkles text-blue-400"></i>
+                                </div>
+                                <div class="particle" style="top: 20%; left: 50%; animation-delay: 1s;">
+                                    <i class="fas fa-magic text-purple-400"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="home-indicator"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 专业设计说明 -->
+        <div class="mt-12 bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-8">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold mb-3 heading">🎨 专业UI/UX设计升级</h2>
+                <p class="text-gray-600">基于Apple Human Interface Guidelines的现代化设计理念</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+                <!-- 设计原则 -->
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+                    <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-palette text-white text-xl"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2 heading">美学完整性</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">遵循iOS设计语言，统一的视觉层次，和谐的色彩搭配，精致的细节处理</p>
+                </div>
+
+                <!-- 交互体验 -->
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
+                    <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-hand-pointer text-white text-xl"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2 heading">流畅交互</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">cubic-bezier动画曲线，物理反馈效果，触觉反馈暗示，渐进式信息展示</p>
+                </div>
+
+                <!-- 视觉系统 -->
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-200">
+                    <div class="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-layer-group text-white text-xl"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2 heading">设计系统</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">CSS变量系统，8pt网格规范，语义化色彩，SF Pro字体，标准化间距</p>
+                </div>
+
+                <!-- 情感化设计 -->
+                <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-6 border border-orange-200">
+                    <div class="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-heart text-white text-xl"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2 heading">情感连接</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">微交互动画，庆祝效果，品牌个性，用户愉悦感，建立情感连接</p>
+                </div>
+            </div>
+
+            <!-- 技术实现亮点 -->
+            <div class="mt-8 bg-gray-50 rounded-xl p-6">
+                <h3 class="font-bold text-lg mb-4 heading">🚀 技术实现亮点</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fas fa-check text-blue-600 text-xs"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-900">真实iOS状态栏</p>
+                            <p class="text-gray-600 text-sm">SVG图标，精确时间显示</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fas fa-check text-green-600 text-xs"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-900">现代CSS技术</p>
+                            <p class="text-gray-600 text-sm">backdrop-filter，CSS Grid，Flexbox</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fas fa-check text-purple-600 text-xs"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-900">高级动画效果</p>
+                            <p class="text-gray-600 text-sm">关键帧动画，粒子效果，骨架屏</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fas fa-check text-orange-600 text-xs"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-900">响应式设计</p>
+                            <p class="text-gray-600 text-sm">移动优先，断点布局，适配各种屏幕</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fas fa-check text-red-600 text-xs"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-900">无障碍设计</p>
+                            <p class="text-gray-600 text-sm">WCAG对比度，语义化HTML，键盘导航</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fas fa-check text-indigo-600 text-xs"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-900">性能优化</p>
+                            <p class="text-gray-600 text-sm">CSS硬件加速，优化动画性能</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 高级交互功能
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化所有交互
+            initializeInteractions();
+            initializeTooltips();
+            initializeHapticFeedback();
+            initializeParticles();
+
+            // 页面加载动画
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach((screen, index) => {
+                setTimeout(() => {
+                    screen.classList.add('fade-in');
+                }, index * 150);
+            });
+        });
+
+        function initializeInteractions() {
+            // 为所有按钮添加触觉反馈
+            const buttons = document.querySelectorAll('button, .action-button, .secondary-button, .option-card, .nav-item');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    this.classList.add('haptic-feedback');
+                    setTimeout(() => {
+                        this.classList.remove('haptic-feedback');
+                    }, 100);
+                });
+            });
+
+            // 为可点击元素添加涟漪效果
+            const clickableElements = document.querySelectorAll('.action-button, .camera-button');
+            clickableElements.forEach(element => {
+                element.addEventListener('click', createRipple);
+            });
+        }
+
+        function createRipple(event) {
+            const button = event.currentTarget;
+            const ripple = document.createElement('span');
+            const rect = button.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = event.clientX - rect.left - size / 2;
+            const y = event.clientY - rect.top - size / 2;
+
+            ripple.style.cssText = `
+                position: absolute;
+                width: ${size}px;
+                height: ${size}px;
+                left: ${x}px;
+                top: ${y}px;
+                background: rgba(255, 255, 255, 0.6);
+                border-radius: 50%;
+                transform: scale(0);
+                animation: ripple-animation 0.6s ease-out;
+                pointer-events: none;
+            `;
+
+            button.style.position = 'relative';
+            button.style.overflow = 'hidden';
+            button.appendChild(ripple);
+
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        }
+
+        function initializeTooltips() {
+            // 为特定元素添加工具提示
+            const tooltipElements = document.querySelectorAll('[data-tooltip]');
+            tooltipElements.forEach(element => {
+                element.addEventListener('mouseenter', showTooltip);
+                element.addEventListener('mouseleave', hideTooltip);
+            });
+        }
+
+        function showTooltip(event) {
+            const tooltip = document.createElement('div');
+            tooltip.className = 'tooltip show';
+            tooltip.textContent = event.target.getAttribute('data-tooltip');
+            document.body.appendChild(tooltip);
+
+            const rect = event.target.getBoundingClientRect();
+            tooltip.style.top = rect.top - 40 + 'px';
+            tooltip.style.left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + 'px';
+        }
+
+        function hideTooltip() {
+            const tooltip = document.querySelector('.tooltip');
+            if (tooltip) {
+                tooltip.remove();
+            }
+        }
+
+        function initializeHapticFeedback() {
+            // 模拟触觉反馈
+            const hapticElements = document.querySelectorAll('.action-button, .camera-button, .nav-item');
+            hapticElements.forEach(element => {
+                element.addEventListener('touchstart', function() {
+                    if (navigator.vibrate) {
+                        navigator.vibrate(10);
+                    }
+                });
+            });
+        }
+
+        function initializeParticles() {
+            // 初始化粒子效果
+            createParticles();
+        }
+
+        function createParticles() {
+            const containers = document.querySelectorAll('.phone-frame');
+            containers.forEach(container => {
+                setInterval(() => {
+                    if (Math.random() > 0.95) {
+                        createParticle(container);
+                    }
+                }, 3000);
+            });
+        }
+
+        function createParticle(container) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.innerHTML = '<i class="fas fa-sparkles"></i>';
+            particle.style.cssText = `
+                position: absolute;
+                color: #667eea;
+                font-size: 12px;
+                pointer-events: none;
+                z-index: 1000;
+            `;
+
+            const startX = Math.random() * container.offsetWidth;
+            particle.style.left = startX + 'px';
+            particle.style.bottom = '0px';
+
+            container.appendChild(particle);
+
+            // 动画
+            let position = 0;
+            let rotation = 0;
+            const animate = () => {
+                position += 2;
+                rotation += 5;
+                particle.style.transform = `translateY(-${position}px) rotate(${rotation}deg)`;
+                particle.style.opacity = Math.max(0, 1 - position / 200);
+
+                if (position < 200) {
+                    requestAnimationFrame(animate);
+                } else {
+                    particle.remove();
+                }
+            };
+
+            requestAnimationFrame(animate);
+        }
+
+        // 模拟复制功能
+        function copyComment() {
+            const commentText = "收到时包装很精致，朋友说这礼物有品位，用了一周，音质比预期好，推荐！";
+
+            // 现代剪贴板API
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(commentText).then(() => {
+                    showCopySuccess();
+                }).catch(() => {
+                    fallbackCopy(commentText);
+                });
+            } else {
+                fallbackCopy(commentText);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const tempTextarea = document.createElement('textarea');
+            tempTextarea.value = text;
+            tempTextarea.style.position = 'fixed';
+            tempTextarea.style.left = '-9999px';
+            document.body.appendChild(tempTextarea);
+            tempTextarea.select();
+
+            try {
+                document.execCommand('copy');
+                showCopySuccess();
+            } catch (err) {
+                console.error('复制失败:', err);
+            }
+
+            document.body.removeChild(tempTextarea);
+        }
+
+        function showCopySuccess() {
+            // 创建成功通知
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-6 right-6 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 flex items-center space-x-2 bounce-in';
+            notification.innerHTML = `
+                <div class="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                    <i class="fas fa-check text-green-500 text-sm"></i>
+                </div>
+                <span class="font-medium">已复制到剪贴板</span>
+            `;
+
+            document.body.appendChild(notification);
+
+            // 3秒后自动移除
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                notification.style.transition = 'all 0.3s ease';
+
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        // 模拟重新生成功能
+        function regenerateComment() {
+            showLoadingState();
+
+            // 模拟AI生成时间
+            setTimeout(() => {
+                hideLoadingState();
+                showRegenerateSuccess();
+            }, 2000);
+        }
+
+        function showLoadingState() {
+            // 显示加载状态
+            const button = event.currentTarget;
+            const originalContent = button.innerHTML;
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>重新生成中...';
+
+            // 保存原始内容以便恢复
+            button.setAttribute('data-original-content', originalContent);
+        }
+
+        function hideLoadingState() {
+            const button = document.querySelector('[disabled]');
+            if (button) {
+                button.disabled = false;
+                button.innerHTML = button.getAttribute('data-original-content');
+            }
+        }
+
+        function showRegenerateSuccess() {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-6 right-6 bg-blue-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 flex items-center space-x-2 bounce-in';
+            notification.innerHTML = `
+                <div class="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                    <i class="fas fa-magic text-blue-500 text-sm"></i>
+                </div>
+                <span class="font-medium">评论已重新生成</span>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                notification.style.transition = 'all 0.3s ease';
+
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        // 模拟编辑功能
+        function editComment() {
+            alert('编辑功能将允许用户自定义修改AI生成的评论内容');
+        }
+
+        // 添加CSS动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple-animation {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // 键盘快捷键支持
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'c':
+                        // Ctrl+C 复制
+                        if (window.getSelection().toString()) {
+                            e.preventDefault();
+                            copyComment();
+                        }
+                        break;
+                    case 'n':
+                        // Ctrl+N 新建
+                        e.preventDefault();
+                        window.location.reload();
+                        break;
+                }
+            }
+        });
+
+        // 响应式处理
+        window.addEventListener('resize', function() {
+            // 处理窗口大小变化
+            handleResponsiveLayout();
+        });
+
+        function handleResponsiveLayout() {
+            const width = window.innerWidth;
+            const phoneFrames = document.querySelectorAll('.phone-frame');
+
+            if (width < 768) {
+                phoneFrames.forEach(frame => {
+                    frame.style.transform = 'scale(0.8)';
+                });
+            } else {
+                phoneFrames.forEach(frame => {
+                    frame.style.transform = 'scale(1)';
+                });
+            }
+        }
+    </script>
+</body>
+</html>
