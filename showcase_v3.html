@@ -11,10 +11,11 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #2d2d2d 100%);
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
             min-height: 100vh;
             padding: 20px;
             position: relative;
+            color: #ffffff;
         }
 
         body::before {
@@ -25,9 +26,9 @@
             right: 0;
             bottom: 0;
             background:
-                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
             z-index: -1;
         }
 
@@ -119,9 +120,9 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: conic-gradient(from 0deg, transparent, rgba(255, 215, 0, 0.1), transparent, rgba(255, 105, 180, 0.1), transparent);
-            animation: rotate 20s linear infinite;
-            opacity: 0.3;
+            background: conic-gradient(from 0deg, transparent, rgba(255, 215, 0, 0.08), transparent, rgba(255, 105, 180, 0.08), transparent);
+            animation: rotate 30s linear infinite;
+            opacity: 0.2;
         }
 
         @keyframes rotate {
@@ -141,24 +142,24 @@
             position: relative;
             z-index: 1;
             box-shadow:
-                0 25px 50px rgba(255, 215, 0, 0.3),
-                0 0 80px rgba(255, 105, 180, 0.2),
-                inset 0 0 30px rgba(255, 255, 255, 0.2);
-            animation: luxury-glow 3s ease-in-out infinite alternate;
+                0 20px 40px rgba(255, 215, 0, 0.25),
+                0 0 60px rgba(255, 105, 180, 0.15),
+                inset 0 0 20px rgba(255, 255, 255, 0.15);
+            animation: luxury-glow 4s ease-in-out infinite alternate;
         }
 
         @keyframes luxury-glow {
             0% {
                 box-shadow:
-                    0 25px 50px rgba(255, 215, 0, 0.3),
-                    0 0 80px rgba(255, 105, 180, 0.2),
-                    inset 0 0 30px rgba(255, 255, 255, 0.2);
+                    0 20px 40px rgba(255, 215, 0, 0.25),
+                    0 0 60px rgba(255, 105, 180, 0.15),
+                    inset 0 0 20px rgba(255, 255, 255, 0.15);
             }
             100% {
                 box-shadow:
-                    0 30px 60px rgba(255, 215, 0, 0.4),
-                    0 0 100px rgba(255, 105, 180, 0.3),
-                    inset 0 0 40px rgba(255, 255, 255, 0.3);
+                    0 25px 50px rgba(255, 215, 0, 0.35),
+                    0 0 80px rgba(255, 105, 180, 0.25),
+                    inset 0 0 30px rgba(255, 255, 255, 0.25);
             }
         }
 
@@ -173,25 +174,27 @@
             margin-bottom: 20px;
             position: relative;
             z-index: 1;
-            text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+            letter-spacing: -1px;
         }
 
         .brand-subtitle {
             font-size: 18px;
-            color: rgba(255, 255, 255, 0.7);
-            font-weight: 300;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 400;
             margin-bottom: 50px;
             letter-spacing: 3px;
             text-transform: uppercase;
             position: relative;
             z-index: 1;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
         }
 
         .luxury-cta {
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 105, 180, 0.2) 100%);
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.25) 0%, rgba(255, 105, 180, 0.25) 100%);
+            border: 2px solid rgba(255, 255, 255, 0.3);
             color: #fff;
-            padding: 25px 50px;
+            padding: 28px 56px;
             border-radius: 50px;
             font-size: 18px;
             font-weight: 600;
@@ -203,6 +206,12 @@
             backdrop-filter: blur(20px);
             text-transform: uppercase;
             letter-spacing: 2px;
+            min-height: 64px;
+            min-width: 240px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.2);
         }
 
         .luxury-cta::before {
@@ -223,10 +232,17 @@
         .luxury-cta:hover {
             transform: translateY(-3px);
             box-shadow:
-                0 20px 40px rgba(255, 215, 0, 0.3),
-                0 0 60px rgba(255, 105, 180, 0.2),
-                inset 0 0 30px rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.4);
+                0 20px 40px rgba(255, 215, 0, 0.4),
+                0 0 60px rgba(255, 105, 180, 0.3),
+                inset 0 0 30px rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        .luxury-cta:active {
+            transform: translateY(-1px);
+            box-shadow:
+                0 15px 30px rgba(255, 215, 0, 0.3),
+                0 0 40px rgba(255, 105, 180, 0.2),
+                inset 0 0 20px rgba(255, 255, 255, 0.1);
         }
 
         /* 拍照界面样式 - 奢华相机 */
@@ -261,9 +277,9 @@
             border-radius: 30px;
             background: linear-gradient(45deg,
                 transparent 30%,
-                rgba(255, 215, 0, 0.1) 50%,
+                rgba(255, 215, 0, 0.08) 50%,
                 transparent 70%);
-            animation: luxury-scan 3s linear infinite;
+            animation: luxury-scan 4s linear infinite;
         }
 
         @keyframes luxury-scan {
@@ -278,8 +294,8 @@
         }
 
         .camera-btn-luxury {
-            width: 80px;
-            height: 80px;
+            width: 88px;
+            height: 88px;
             border-radius: 50%;
             border: none;
             display: flex;
@@ -289,25 +305,34 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             backdrop-filter: blur(20px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         .camera-btn-luxury.secondary {
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.25);
             color: #fff;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
         }
 
         .camera-btn-luxury.primary {
             background: linear-gradient(135deg, #ffd700, #ff69b4);
             color: #000;
             box-shadow:
-                0 15px 35px rgba(255, 215, 0, 0.4),
-                0 0 60px rgba(255, 105, 180, 0.3);
+                0 12px 30px rgba(255, 215, 0, 0.4),
+                0 0 50px rgba(255, 105, 180, 0.3);
+            transform: scale(1.05);
         }
 
         .camera-btn-luxury:hover {
             transform: scale(1.1) rotate(5deg);
+        }
+        .camera-btn-luxury:active {
+            transform: scale(1.05) rotate(2deg);
+        }
+        .camera-btn-luxury.secondary:active {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.4);
         }
 
         /* 输入界面样式 - 奢华卡片 */
@@ -317,23 +342,24 @@
         }
 
         .input-card-luxury {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03));
             backdrop-filter: blur(40px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 30px;
             padding: 0;
             box-shadow:
-                0 20px 40px rgba(0, 0, 0, 0.6),
-                inset 0 0 30px rgba(255, 255, 255, 0.05);
+                0 20px 40px rgba(0, 0, 0, 0.5),
+                inset 0 0 30px rgba(255, 255, 255, 0.08);
             overflow: hidden;
         }
 
         .input-header-luxury {
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 105, 180, 0.1));
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.12), rgba(255, 105, 180, 0.12));
             color: white;
             padding: 40px 30px;
             text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
         }
 
         .input-body-luxury {
@@ -342,16 +368,18 @@
 
         .input-field-luxury {
             width: 100%;
-            padding: 20px 25px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            padding: 22px 28px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
             border-radius: 20px;
-            font-size: 16px;
+            font-size: 17px;
             font-weight: 500;
             margin-bottom: 25px;
             transition: all 0.4s ease;
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.05);
             color: #fff;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
+            min-height: 60px;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
         }
 
         .input-field-luxury::placeholder {
@@ -360,11 +388,12 @@
 
         .input-field-luxury:focus {
             outline: none;
-            border-color: rgba(255, 215, 0, 0.5);
+            border-color: rgba(255, 215, 0, 0.6);
             background: rgba(255, 255, 255, 0.08);
             box-shadow:
-                0 0 0 3px rgba(255, 215, 0, 0.2),
-                0 10px 30px rgba(255, 215, 0, 0.1);
+                0 0 0 4px rgba(255, 215, 0, 0.25),
+                0 12px 35px rgba(255, 215, 0, 0.15),
+                inset 0 2px 8px rgba(255, 215, 0, 0.1);
         }
 
         /* 生成界面样式 - 奢华加载 */
@@ -389,13 +418,14 @@
             height: 200%;
             background: conic-gradient(from 0deg,
                 transparent,
-                rgba(255, 215, 0, 0.1),
+                rgba(255, 215, 0, 0.08),
                 transparent,
-                rgba(255, 105, 180, 0.1),
+                rgba(255, 105, 180, 0.08),
                 transparent,
-                rgba(0, 206, 209, 0.1),
+                rgba(0, 206, 209, 0.08),
                 transparent);
-            animation: rotate 10s linear infinite;
+            animation: rotate 15s linear infinite;
+            opacity: 0.3;
         }
 
         .ai-loading-luxury {
@@ -438,21 +468,22 @@
         }
 
         .result-card-luxury {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03));
             backdrop-filter: blur(40px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 30px;
             padding: 0;
             box-shadow:
-                0 20px 40px rgba(0, 0, 0, 0.6),
-                inset 0 0 30px rgba(255, 255, 255, 0.05);
+                0 20px 40px rgba(0, 0, 0, 0.5),
+                inset 0 0 30px rgba(255, 255, 255, 0.08);
             overflow: hidden;
         }
 
         .result-header-luxury {
             padding: 30px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(255, 105, 180, 0.05));
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(255, 105, 180, 0.08));
+            backdrop-filter: blur(20px);
         }
 
         .restaurant-info-luxury {
@@ -479,11 +510,11 @@
         .comment-text-luxury {
             font-size: 18px;
             line-height: 1.8;
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, 0.95);
             margin-bottom: 40px;
             font-weight: 400;
-            letter-spacing: 0.5px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            letter-spacing: 0.3px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
         }
 
         .action-buttons-luxury {
@@ -493,7 +524,7 @@
 
         .action-btn-luxury {
             flex: 1;
-            padding: 20px;
+            padding: 22px 20px;
             border: none;
             border-radius: 20px;
             font-weight: 600;
@@ -503,9 +534,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
             letter-spacing: 1px;
             text-transform: uppercase;
+            min-height: 64px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
 
         .copy-btn-luxury {
@@ -516,9 +549,15 @@
         }
 
         .copy-btn-luxury:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.12);
             transform: translateY(-3px);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+        .copy-btn-luxury:active {
+            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
 
         .share-btn-luxury {
@@ -535,6 +574,12 @@
             box-shadow:
                 0 20px 40px rgba(255, 215, 0, 0.5),
                 0 0 60px rgba(255, 105, 180, 0.4);
+        }
+        .share-btn-luxury:active {
+            transform: translateY(-1px);
+            box-shadow:
+                0 15px 30px rgba(255, 215, 0, 0.4),
+                0 0 40px rgba(255, 105, 180, 0.3);
         }
 
         .prototype-container {
@@ -598,13 +643,10 @@
         }
 
         .main-screen {
-            animation: particles 6s linear infinite;
+            position: relative;
         }
 
-        @keyframes particles {
-            0%, 100% { filter: hue-rotate(0deg); }
-            50% { filter: hue-rotate(30deg); }
-        }
+        /* 删除不必要的粒子动画 */
     </style>
 </head>
 <body>
@@ -638,9 +680,9 @@
                                 </div>
                                 <h2 class="brand-title">Eatscribe</h2>
                                 <p class="brand-subtitle">美食评论艺术</p>
-                                <p class="text-white/60 text-sm leading-relaxed max-w-xs mb-8">
-                                    用 AI 重塑美食评论体验<br>
-                                    每一个字都值得品味
+                                <p class="text-white/70 text-sm leading-relaxed max-w-xs mb-8 px-4">
+                                    拍摄美食照片，AI 即刻生成<br>
+                                    专业级美食评论，轻松分享
                                 </p>
                                 <button class="luxury-cta">
                                     <i class="fas fa-gem mr-3"></i>
@@ -738,8 +780,8 @@
                             <div class="ai-loading-luxury">
                                 <div class="luxury-loader"></div>
                                 <h3 class="text-3xl font-semibold mb-4">AI 正在创作</h3>
-                                <p class="text-white/80 text-lg mb-2">分析美食精髓...</p>
-                                <p class="text-white/60">编织独特味觉体验</p>
+                                <p class="text-white/90 text-lg mb-2 font-medium">分析美食精髓...</p>
+                                <p class="text-white/70 text-sm">为您量身定制专属评论</p>
                             </div>
                         </div>
                     </div>
