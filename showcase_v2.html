@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eatscribe App - 高保真原型设计 v2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'SF Pro Display', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .phone-mockup {
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 40px;
+            padding: 10px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            margin: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .status-bar {
+            height: 44px;
+            background: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 134px;
+            height: 5px;
+            background: #000;
+            border-radius: 100px;
+        }
+
+        .screen-content {
+            height: calc(100% - 44px);
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* 主界面样式 - 简约现代 */
+        .main-screen {
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .app-logo-v2 {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-logo-v2::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .cta-button-v2 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 24px 48px;
+            border-radius: 20px;
+            font-size: 20px;
+            font-weight: 700;
+            margin-top: 60px;
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button-v2::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .cta-button-v2:hover::before {
+            left: 100%;
+        }
+
+        .cta-button-v2:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.5);
+        }
+
+        /* 拍照界面样式 - 现代化 */
+        .camera-screen-v2 {
+            background: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .camera-viewfinder-v2 {
+            width: 320px;
+            height: 320px;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            margin-bottom: 50px;
+            position: relative;
+            background: url('https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=320&h=320&fit=crop') center/cover;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.3);
+        }
+
+        .camera-viewfinder-v2::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 25px;
+            background: linear-gradient(45deg, transparent 30%, rgba(102, 126, 234, 0.1) 50%, transparent 70%);
+            animation: scan 2s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .camera-controls-v2 {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .camera-btn-v2 {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .camera-btn-v2.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: #fff;
+        }
+
+        .camera-btn-v2.primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        }
+
+        .camera-btn-v2:hover {
+            transform: scale(1.1);
+        }
+
+        .camera-btn-v2:active {
+            transform: scale(0.95);
+        }
+
+        /* 输入界面样式 - 现代卡片 */
+        .input-screen-v2 {
+            background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 0;
+        }
+
+        .input-card-v2 {
+            background: #fff;
+            margin: 20px;
+            border-radius: 25px;
+            padding: 0;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .input-header-v2 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .input-body-v2 {
+            padding: 30px;
+        }
+
+        .input-field-v2 {
+            width: 100%;
+            padding: 18px 24px;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+
+        .input-field-v2:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* 生成界面样式 - 未来感 */
+        .loading-screen-v2 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loading-screen-v2::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .ai-loading {
+            position: relative;
+            z-index: 1;
+        }
+
+        .loading-orbs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+
+        .orb {
+            width: 12px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: bounce 1.4s ease-in-out infinite both;
+        }
+
+        .orb:nth-child(1) { animation-delay: -0.32s; }
+        .orb:nth-child(2) { animation-delay: -0.16s; }
+        .orb:nth-child(3) { animation-delay: 0; }
+
+        @keyframes bounce {
+            0%, 80%, 100% {
+                transform: scale(0);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* 结果界面样式 - 优雅 */
+        .result-screen-v2 {
+            background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+            padding: 20px;
+        }
+
+        .result-card-v2 {
+            background: #fff;
+            border-radius: 25px;
+            padding: 0;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .result-header-v2 {
+            padding: 25px 30px;
+            border-bottom: 1px solid #f1f5f9;
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+        }
+
+        .restaurant-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .restaurant-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            object-fit: cover;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-body-v2 {
+            padding: 30px;
+        }
+
+        .comment-text-v2 {
+            font-size: 17px;
+            line-height: 1.7;
+            color: #374151;
+            margin-bottom: 30px;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+        }
+
+        .action-buttons-v2 {
+            display: flex;
+            gap: 15px;
+        }
+
+        .action-btn-v2 {
+            flex: 1;
+            padding: 18px;
+            border: none;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .copy-btn-v2 {
+            background: #f8fafc;
+            color: #475569;
+            border: 2px solid #e2e8f0;
+        }
+
+        .copy-btn-v2:hover {
+            background: #e2e8f0;
+            transform: translateY(-2px);
+        }
+
+        .share-btn-v2 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .share-btn-v2:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .prototype-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            padding: 40px 0;
+        }
+
+        .screen-label {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            backdrop-filter: blur(10px);
+        }
+
+        .floating-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            top: 70%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .shape:nth-child(3) {
+            width: 40px;
+            height: 40px;
+            top: 40%;
+            right: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .content-overlay {
+            position: relative;
+            z-index: 1;
+        }
+
+        .app-title {
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+
+        .app-subtitle {
+            font-size: 18px;
+            color: #64748b;
+            font-weight: 400;
+            margin-bottom: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen py-8">
+        <!-- 标题 -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-white mb-4">Eatscribe App - 高保真原型设计</h1>
+            <p class="text-white/80 text-lg">版本 2: 现代简约风格</p>
+        </div>
+
+        <!-- 原型展示区域 -->
+        <div class="prototype-container">
+
+            <!-- 主界面 -->
+            <div class="phone-mockup">
+                <div class="screen-label">主界面</div>
+                <div class="phone-screen">
+                    <div class="status-bar">
+                        <span>9:41</span>
+                        <div class="flex gap-1">
+                            <i class="fas fa-signal"></i>
+                            <i class="fas fa-wifi"></i>
+                            <i class="fas fa-battery-three-quarters"></i>
+                        </div>
+                    </div>
+                    <div class="screen-content">
+                        <div class="main-screen">
+                            <div class="floating-shapes">
+                                <div class="shape"></div>
+                                <div class="shape"></div>
+                                <div class="shape"></div>
+                            </div>
+                            <div class="content-overlay">
+                                <div class="app-logo-v2">
+                                    <i class="fas fa-utensils text-white text-4xl"></i>
+                                </div>
+                                <h2 class="app-title">Eatscribe</h2>
+                                <p class="app-subtitle">AI 美食评论生成器</p>
+                                <p class="text-gray-400 text-sm leading-relaxed max-w-xs">
+                                    用一张照片，瞬间生成<br>真实有温度的美食评论
+                                </p>
+                                <button class="cta-button-v2">
+                                    <i class="fas fa-magic mr-3"></i>
+                                    开始创作评论
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="home-indicator"></div>
+                </div>
+            </div>
+
+            <!-- 拍照界面 -->
+            <div class="phone-mockup">
+                <div class="screen-label">智能拍照界面</div>
+                <div class="phone-screen">
+                    <div class="status-bar">
+                        <span>9:41</span>
+                        <div class="flex gap-1">
+                            <i class="fas fa-signal"></i>
+                            <i class="fas fa-wifi"></i>
+                            <i class="fas fa-battery-three-quarters"></i>
+                        </div>
+                    </div>
+                    <div class="screen-content">
+                        <div class="camera-screen-v2">
+                            <div class="camera-viewfinder-v2"></div>
+                            <div class="camera-controls-v2">
+                                <button class="camera-btn-v2 secondary">
+                                    <i class="fas fa-times text-2xl"></i>
+                                </button>
+                                <button class="camera-btn-v2 primary">
+                                    <i class="fas fa-camera text-2xl"></i>
+                                </button>
+                                <button class="camera-btn-v2 secondary">
+                                    <i class="fas fa-images text-2xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="home-indicator"></div>
+                </div>
+            </div>
+
+            <!-- 输入界面 -->
+            <div class="phone-mockup">
+                <div class="screen-label">餐厅信息</div>
+                <div class="phone-screen">
+                    <div class="status-bar">
+                        <span>9:41</span>
+                        <div class="flex gap-1">
+                            <i class="fas fa-signal"></i>
+                            <i class="fas fa-wifi"></i>
+                            <i class="fas fa-battery-three-quarters"></i>
+                        </div>
+                    </div>
+                    <div class="screen-content">
+                        <div class="input-screen-v2">
+                            <div class="input-card-v2">
+                                <div class="input-header-v2">
+                                    <h3 class="text-2xl font-semibold">完善餐厅信息</h3>
+                                    <p class="text-white/80 mt-2">AI 将为您生成精彩评论</p>
+                                </div>
+                                <div class="input-body-v2">
+                                    <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=200&fit=crop"
+                                         class="w-full h-48 object-cover rounded-2xl mb-6 shadow-lg" alt="美食照片">
+                                    <input type="text" class="input-field-v2" placeholder="餐厅名称 (必填)" value "老张面馆">
+                                    <input type="text" class="input-field-v2" placeholder="餐厅地址 (选填)" value="北京朝阳区三里屯路">
+                                    <button class="cta-button-v2 w-full">
+                                        <i class="fas fa-wand-magic-sparkles mr-2"></i>
+                                        生成美食评论
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="home-indicator"></div>
+                </div>
+            </div>
+
+            <!-- 生成界面 -->
+            <div class="phone-mockup">
+                <div class="screen-label">AI 智能生成</div>
+                <div class="phone-screen">
+                    <div class="status-bar">
+                        <span>9:41</span>
+                        <div class="flex gap-1">
+                            <i class="fas fa-signal"></i>
+                            <i class="fas fa-wifi"></i>
+                            <i class="fas fa-battery-three-quarters"></i>
+                        </div>
+                    </div>
+                    <div class="screen-content">
+                        <div class="loading-screen-v2">
+                            <div class="ai-loading">
+                                <div class="loading-orbs">
+                                    <div class="orb"></div>
+                                    <div class="orb"></div>
+                                    <div class="orb"></div>
+                                </div>
+                                <h3 class="text-3xl font-semibold mb-4">AI 正在创作</h3>
+                                <p class="text-white/90 text-lg mb-2">分析美食图像中...</p>
+                                <p class="text-white/70">提取餐厅特色与口味</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="home-indicator"></div>
+                </div>
+            </div>
+
+            <!-- 结果界面 -->
+            <div class="phone-mockup">
+                <div class="screen-label">评论完成</div>
+                <div class="phone-screen">
+                    <div class="status-bar">
+                        <span>9:41</span>
+                        <div class="flex gap-1">
+                            <i class="fas fa-signal"></i>
+                            <i class="fas fa-wifi"></i>
+                            <i class="fas fa-battery-three-quarters"></i>
+                        </div>
+                    </div>
+                    <div class="screen-content">
+                        <div class="result-screen-v2">
+                            <div class="result-card-v2">
+                                <div class="result-header-v2">
+                                    <div class="restaurant-info">
+                                        <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=60&h=60&fit=crop"
+                                             class="restaurant-image" alt="美食">
+                                        <div>
+                                            <h4 class="text-xl font-semibold text-gray-800">老张面馆</h4>
+                                            <p class="text-sm text-gray-600">北京朝阳区三里屯路</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="result-body-v2">
+                                    <div class="comment-text-v2">
+                                        刚在老张面馆尝了招牌红烧肉，肉质鲜嫩，肥而不腻，入口即化的口感让人难忘。浓郁的酱汁搭配香喷喷的米饭，简直是绝配。虽然上菜速度有点慢，但为了这个味道，等多久都值得。
+                                    </div>
+                                    <div class="action-buttons-v2">
+                                        <button class="action-btn-v2 copy-btn-v2">
+                                            <i class="fas fa-copy"></i>
+                                            复制评论
+                                        </button>
+                                        <button class="action-btn-v2 share-btn-v2">
+                                            <i class="fas fa-share-alt"></i>
+                                            分享出去
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="home-indicator"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 设计说明 -->
+        <div class="max-w-4xl mx-auto mt-12 bg-white/10 backdrop-blur-sm rounded-3xl p-8 text-white">
+            <h3 class="text-2xl font-bold mb-6">设计特点 - 版本 2</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <h4 class="font-semibold mb-3">🎨 视觉风格</h4>
+                    <ul class="text-sm text-white/80 space-y-1">
+                        <li>• 现代蓝紫渐变主题</li>
+                        <li>• 毛玻璃与模糊效果</li>
+                        <li>• 流畅动画过渡</li>
+                        <li>• 简约几何设计</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-3">🚀 交互体验</h4>
+                    <ul class="text-sm text-white/80 space-y-1">
+                        <li>• 智能扫描动画</li>
+                        <li>• 悬浮按钮反馈</li>
+                        <li>• 卡片式布局</li>
+                        <li>• 未来科技感</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-3">📱 技术亮点</h4>
+                    <ul class="text-sm text-white/80 space-y-1">
+                        <li>• CSS3 高级动画</li>
+                        <li>• 渐变色彩系统</li>
+                        <li>• 响应式交互</li>
+                        <li>• 现代化字体</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
